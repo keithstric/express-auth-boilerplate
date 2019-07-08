@@ -1,6 +1,6 @@
 # express-auth-boilerplate
 
-This is a boilerplate project to setup express, passport and orientdb.
+This is a boilerplate project to setup express, passport and orientdb. API Routes provided are for authorization and registration. If you want to use some other database, just replace the orientdb Docker configuration with your preferred DB.
 
 ## Directory structure
 
@@ -126,7 +126,7 @@ To stop the Docker environment run:
 
 `npm run stop:docker`
 
-## Projects of Interest
+## Node Projects of Interest
 
 * [node.js](https://nodejs.org) - Node.js
 * [express](https://expressjs.com) - The Web API
@@ -135,3 +135,4 @@ To stop the Docker environment run:
 * [winston](https://www.npmjs.com/package/winston) - A Logger
 * [swagger](https://swagger.io) - API Documentation
 * [typescript](https://www.typescriptlang.org/)
+* [react](https://reactjs.org)
