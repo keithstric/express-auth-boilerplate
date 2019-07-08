@@ -3,6 +3,7 @@ import passportLocal from 'passport-local';
 import { Application } from 'express';
 import { Db } from 'orientjs';
 import { Person } from '../models/Person';
+import { logger } from './logger';
 
 const initPassport = (app: Application, db: Db) => {
 	app.use(passport.initialize());
@@ -31,7 +32,7 @@ const initPassport = (app: Application, db: Db) => {
 				done(null, false, {message: `Email Address "${email}" not found`});
 			}
 		}).catch((err: Error) => {
-			console.error(err);
+			logger.error('Error occurred in passport middleware: %s', err.message);
 			done(err, false, {message: err.message});
 		});
 	}));

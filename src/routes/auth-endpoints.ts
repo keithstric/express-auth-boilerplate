@@ -7,8 +7,33 @@ import { Db } from 'orientjs';
 import { createVertex, getVertexByProperty, createPassword } from '../helpers/db-helpers';
 import { PersonDocument } from '../models/Person';
 import passport from 'passport';
+import { logger } from '../config/logger';
 
 const initAuthEndpoints = (app: Application, db: Db) => {
+	/**
+	 * @swagger
+	 * definitions:
+	 *   Person:
+	 *     type: object
+	 *     properties:
+	 *       first_name:
+	 *         type: string
+	 *       last_name:
+	 *         type: string
+	 *       email:
+	 *         type: string
+	 *       password:
+	 *         type: string
+	 */
+
+	/**
+	 * @swagger
+	 * tags:
+	 *   - name: default
+	 *   - name: authentication
+	 *     description: The Registration and Login process
+	 */
+
 	/**
 	 * Route Middleware to redirect to the login page if there isn't an established session
 	 * @param req {Request}
@@ -173,6 +198,7 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 		}).then((newPerson: PersonDocument) => {
 			createVertex('Person', newPerson, db).then((personVertex: PersonDocument) => {
 				if (personVertex) {
+					logger.info('Created person: %s with email %s', personVertex.first_name + ' ' + personVertex.last_name, personVertex.email);
 					req.login(personVertex.uuid, (err) => {
 						if (err) {
 							throw err;
@@ -183,16 +209,17 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 					res.status(400).send(new Error('No result from user creation'));
 				}
 			}).catch((err: Error) => {
-				console.error(err);
+				logger.error('Error Occurred at POST route /register: %s', err.message);
 				res.status(500).send(err);
 			});
+			return false; // Prevent Bluebird error: "Warning: a promise was created in a handler but was not returned from it"
 		}).catch((err: Error) => {
-			if (err.message === `User with email ${email} already exists!`) {
+			if (err && err.message === `User with email ${email} already exists!`) {
 				res.redirect('/login');
-			}else if (err.message = 'Passwords do not match') {
+			}else if (err && err.message === 'Passwords do not match') {
 				res.send(err.message);
 			}else{
-				console.error(err);
+				logger.error('Error Occurred at POST route /register: %s', err.message);
 				res.status(500).send(err);
 			}
 		});

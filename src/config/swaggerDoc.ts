@@ -26,7 +26,7 @@ const options = {
 		},
 		basePath: '/'
 	},
-	apis: ['./dist/routes/people-endpoints.js', './dist/routes/auth-endpoints.js']
+	apis: ['./dist/routes/auth-endpoints.js']
 };
 
 const swaggerSpec = swaggerJsdoc(options);

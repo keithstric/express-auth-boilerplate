@@ -2,10 +2,11 @@ import express, { Request, Response, Application } from 'express';
 import session from 'express-session';
 import flash from 'express-flash';
 import initAuthEndpoints from './routes/auth-endpoints';
-import swaggerDocs from './swaggerDoc';
+import swaggerDocs from './config/swaggerDoc';
 import getDbConn from './config/orient-db';
 import connectRedis, {RedisStoreOptions} from 'connect-redis';
 import initPassport from './config/passport';
+import {logger} from './config/logger';
 
 /**
  * Setup the application
@@ -14,14 +15,14 @@ const app: Application = express();
 const port = parseInt(process.env.WEB_PORT);
 const db = getDbConn();
 /**
- * middleware
+ * express middleware
  */
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
-app.use(flash())
+app.use(flash());
 
 app.use((err: Error, req: Request, res: Response, next: any) => {
-	console.error('There was an error', err)
+	logger.error('An error ocurred: %s', err.message);
 	res.send(err);
 });
 /**
@@ -43,7 +44,7 @@ app.use(session({
 	saveUninitialized: false
 }));
 /**
- * Setup passport, routes and swagger
+ * Setup passport middleware, routes and swagger
  */
 initPassport(app, db);
 initAuthEndpoints(app, db);
@@ -53,5 +54,7 @@ swaggerDocs(app);
  * @returns express.server
  */
 app.listen(port, () => {
-	console.log(`express-auth-boilerplate started at docker port ${port} available locally at http://localhost:${process.env.WEB_LOCAL_PORT}`);
+	let dockerPort = port;
+	let baseUrl = 'http://localhost' + ':' + process.env.WEB_LOCAL_PORT;
+	logger.info('express-auth-boilerplate listening on:\n Docker port: %s\n Locally at: %s\n', dockerPort, baseUrl);
 });

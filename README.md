@@ -2,6 +2,17 @@
 
 This is a boilerplate project to setup express, passport and orientdb. API Routes provided are for authorization and registration. If you want to use some other database, just replace the orientdb Docker configuration with your preferred DB.
 
+## Services Provided
+
+The following services are provided by this project:
+
+* Express.js Application
+* Passport Authentication
+* OrientDB
+* Redis - For pub/sub and Session storage
+* Winston logging to files and console
+* Base React client application
+
 ## Directory structure
 
 The following explains the directory structure of this project
