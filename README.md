@@ -2,9 +2,35 @@
 
 This is a boilerplate project to setup express, passport and orientdb.
 
+## Directory structure
+
+The following explains the directory structure of this project
+
+* `client` - This is the directory where you will place your client application. This currently has a React project initialized
+* `orientdb` - This directory contains files required for OrientDB
+	* `backup` - Backups
+	* `databases` - Contains the Database Schema and data
+* `redisData` - Redis data
+* `src` - Contains the source code for the express application
+	* `config` - Directory for server configuration files (i.e. DB, Passport, etc.)
+	* `controllers` - Directory for controller files
+	* `helpers` - Directory for common helper type files
+	* `models` - Directory for Data Model storage
+	* `routes` - Directory for express routing files
+	* `app.ts` - The application entry point
+	* `swaggerDocs.ts` - Swagger configuration
+* `.dockerignore` - Files/Directories to ignore while copying data to a docker container
+* `.env` - Environment variables for the express application - *NOT STORED IN REPOSITORY*
+* `.env.default` - Default `.env` structure *DO NOT DELETE*
+* `.gitignore` - Files/Directories to ignore when committing to the repository
+* `docker-compose.yml` - Docker container configuration
+* `Dockerfile` - Docker environment configuration
+* `package.json` - Node.js configuration
+* `tsconfig.json` - Typescript Configuration
+
 ## Dependencies
 
-To run this application locally there are some dependencies you will need to have installed locally.
+To run this application there are some dependencies you will need to have installed locally.
 
 * [node.js](https://nodejs.org) - A JavaScript runtime built on Chrome's V8 JavaScript engine.
 * [docker](https://docker.com) - Securely build, share and run any application, anywhere.
@@ -31,20 +57,14 @@ After cloning this repository you will find a `.env.default` file. Copy this fil
 * WEB_SESS_SECRET - Random string for hashing the value for the user session
 * WEB_SESS_DURATION - Number of MilliSeconds a session should remain active
 
-## Docker Images
-
-* [redis](https://hub.docker.com/_/redis) - Redis is an open source key-value store that functions as a data structure server.
-* [orientdb](https://hub.docker.com/_/orientdb) - OrientDB a Multi-Model Open Source NoSQL DBMS that combines graphs and documents.
-* [node](https://hub.docker.com/_/node) - Node.js is a JavaScript-based platform for server-side and networking applications.
-
 ## package.json Scripts
 
 * postinstall - Runs the build script once `npm install` is done
 * build - Compiles all TypeScript to JavaScript and places in the `./dist` directory
 * start:docker - Starts the docker containers
 * build:start:docker - Builds the docker containers and then starts them
-* start - Starts the node application
-* watch - Starts `tsc-watch`. Will reload the node application when changes are made in the `./src` directory
+* start - Starts the node application (Used inside Docker container)
+* watch - Starts `tsc-watch`. Will reload the node application when changes are made in the `./src` directory (Used inside Docker container)
 * stop:docker - Stops all docker containers
 
 ## Getting started - Development
@@ -76,6 +96,12 @@ After the initial process has been executed and you have 3 docker containers run
 
 This project utilizes [Docker](https://docker.com) to provide the node.js, orientDB and Redis services. This ensures consistency between instances and ease of deployment.
 
+### Docker Images
+
+* [redis](https://hub.docker.com/_/redis) - Redis is an open source key-value store that functions as a data structure server.
+* [orientdb](https://hub.docker.com/_/orientdb) - OrientDB a Multi-Model Open Source NoSQL DBMS that combines graphs and documents.
+* [node](https://hub.docker.com/_/node) - Node.js is a JavaScript-based platform for server-side and networking applications.
+
 ### Manually Building the Docker Environment
 
 There are scenarios where you will need to re-build your docker environment. These scenarios are listed below:
@@ -84,11 +110,15 @@ There are scenarios where you will need to re-build your docker environment. The
 * You modify your `Dockerfile` file
 * You modify your `docker-compose.yml` file
 
-In these instances you will need to force Docker to rebuild it's containers. Just run `npm run build:start:docker`. This will rebuild the docker containers.
+In these instances you will need to force Docker to rebuild it's containers. Just run:
+
+`npm run build:start:docker`
+
+This will rebuild the docker containers.
 
 ### Starting/Stopping the Docker Environment
 
-To start the Docker environment run:
+To start the Docker environment without rebuilding run:
 
 `npm run start:docker`
 
