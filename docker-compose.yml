@@ -1,0 +1,51 @@
+version: '2.1'
+
+services:
+  orientdb:
+    image: orientdb
+    command: 'server.sh -Dstorage.wal.allowDirectIO=false'
+    environment:
+      ORIENTDB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      ORIENTDB_NODE_NAME: ${DB_HOST}
+    volumes:
+      - ./orientdb/databases:/orientdb/databases
+      - ./orientdb/backup:/orientdb/backup
+    ports:
+      - ${DB_STUDIO_PORT}:${DB_STUDIO_PORT}
+      - ${DB_PORT}:${DB_PORT}
+    links:
+      - express-auth-server
+  redis:
+    image: redis
+    volumes:
+      - ./redisData:/data
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    links:
+      - express-auth-server
+  express-auth-server:
+    image: express-auth-boilerplate
+    build: .
+    command: npm run watch
+    volumes:
+      - ./dist:/usr/express-auth-boilerplate/dist
+      - ./src:/usr/express-auth-boilerplate/src
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: ${DB_PORT}
+      DB_ROOT_USER: ${DB_ROOT_USER}
+      DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      WEB_PORT: ${WEB_PORT}
+      WEB_LOCAL_PORT: ${WEB_LOCAL_PORT}
+      WEB_SESS_NAME: ${WEB_SESS_NAME}
+      WEB_SESS_SECRET: ${WEB_SESS_SECRET}
+      WEB_SESS_DURATION: ${WEB_SESS_DURATION}
+    ports:
+      - ${WEB_LOCAL_PORT}:${WEB_PORT}
+      - ${WEB_DEBUG_PORT}:${WEB_DEBUG_PORT}
