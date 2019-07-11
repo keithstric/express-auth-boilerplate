@@ -1,0 +1,141 @@
+/*******************
+	Header Styles
+*******************/
+.App-header {
+	background-color: #282c34;
+	align-items: center;
+	justify-content: flex-start;
+	font-size: calc(10px + 2vmin);
+	color: white;
+  }
+
+  .App-header .headerItem {
+	  flex-grow: 0;
+  }
+
+  .App-header .titleContainer {
+	  flex-grow: 1;
+	  text-align: center;
+  }
+
+  .App-header .titleContainer h2 {
+	  margin: 5px 0;
+	  align-self: center;
+  }
+
+  .App-logo {
+	  animation: App-logo-spin infinite 20s linear;
+	  height: 40px;
+	  pointer-events: none;
+  }
+
+  .App-headerLinkContainer {
+	  align-items: flex-end;
+	  font-size: 12px;
+	  padding: 0 10px;
+  }
+
+  .App-headerLinkContainer ul {
+	  list-style-type: none;
+  }
+
+  .App-headerLinkContainer ul li {
+	  padding: 3px;
+  }
+
+  .App-headerLinkContainer a {
+	  color: #61dafb;
+  }
+
+  .appPageContainer {
+	  padding: 15px;
+  }
+  /******************
+	  form styles
+  ******************/
+  .formRow {
+	  display: flex;
+	  flex-direction: column;
+	  margin-bottom: 10px;
+  }
+
+  .formRow label {
+	  font-size: 12px;
+  }
+  /*******************
+	  page styles
+  *******************/
+  .pageActionButtonContainer {
+	  border-radius: 50%;
+	  overflow: hidden;
+	  height: 34.67px;
+  }
+
+  .pageActionButtonContainer:hover {
+	  box-shadow: 0px 5px 6px -3px rgba(0, 0, 0, 0.4);
+  }
+
+  .pageActionButtonContainer button {
+	  border-radius: 50%;
+	  border: 1px solid #afafaf;
+	  padding: 8px;
+  }
+
+  .pageActionButtonContainer button .svg-inline--fa.fa-fw {
+	  width: 16px;
+	  height: 16px;
+  }
+  /*********************
+	  Shared Styles
+  *********************/
+  .horizontal {
+	  display: flex;
+	  flex-direction: row;
+  }
+
+  .vertical {
+	  display: flex;
+	  flex-direction: column;
+  }
+
+  .flex-end {
+	  justify-content: flex-end;
+  }
+
+  .smallText {
+	  font-size: 11px;
+	  margin-bottom: 5px;
+  }
+
+  button:hover {
+	  cursor: pointer !important;
+  }
+
+  .loginMessage {
+	  display: flex;
+	  flex-direction: row;
+	  padding: .75rem 1.25rem;;
+	  justify-content: center;
+	  align-items: center;
+	  background-color: #fff3cd;
+	  color: #856404;
+	  border: 1px solid #ffeeba;
+	  margin-bottom: 10px;
+	  border-radius: .25rem;
+  }
+
+  /*********************
+	  Animations
+  *********************/
+  @keyframes App-logo-spin {
+	from {
+	  transform: rotate(0deg);
+	}
+	to {
+	  transform: rotate(360deg);
+	}
+  }
+
+  *[hidden] {
+	  display: none;
+  }
