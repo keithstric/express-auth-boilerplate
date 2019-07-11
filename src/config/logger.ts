@@ -1,3 +1,7 @@
+/**
+ * This file sets up the winston logger
+ * https://www.npmjs.com/package/winston
+ */
 import { createLogger, format, transports } from 'winston';
 import * as events from 'events';
 

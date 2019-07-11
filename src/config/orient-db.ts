@@ -1,6 +1,5 @@
 /**
  * This file sets up the database connection
- * @todo: We need to make authentication session based
  */
 import OrientDBClient, { ServerConfig } from 'orientjs';
 

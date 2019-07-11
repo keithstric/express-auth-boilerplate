@@ -50,8 +50,7 @@ initPassport(app, db);
 initAuthEndpoints(app, db);
 swaggerDocs(app);
 /**
- * Start the server listener
- * @returns express.server
+ * Start the listener
  */
 app.listen(port, () => {
 	let dockerPort = port;

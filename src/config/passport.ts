@@ -1,3 +1,7 @@
+/**
+ * This file sets up the passport authentication middleware and user serialization/deserialization
+ * https://passportjs.org
+ */
 import passport from 'passport';
 import passportLocal from 'passport-local';
 import { Application } from 'express';
@@ -18,13 +22,21 @@ const initPassport = (app: Application, db: Db) => {
 		// console.log('config/passport.ts, passport.deserializeUser, user_uuid=', user_uuid);
 		done(null, user_uuid);
 	});
-
+	/**
+	 * Passport middleware. This is called from `passport.authenticate()`.
+	 * Will get the user from the database and compare passwords
+	 * the done function accepts 3 arguments: error, truthy/false, {message: string}
+	 * if false is provided (2nd arg) it means the request failed. truthy is success
+	 * the message is posted as a flash message
+	 */
 	passport.use(new passportLocal.Strategy({usernameField: 'email'}, (email: string, password: string, done: any) => {
+		// console.log('passport.ts, email=', email);
+		// console.log('passport.ts, password=', password);
 		const user = new Person(db);
 		user.init(email).then((person: any) => {
 			if (person) {
 				if (person.comparePassword(password)) {
-					done(null, person.uuid);
+					done(null, person);
 				}else {
 					done(null, false, {message: 'Incorrect Password'});
 				}

@@ -7,7 +7,6 @@
  * - https://swagger.io/docs/specification/paths-and-operations/
  * - https://www.oodlestechnologies.com/blogs/Integrate-Swagger-in-your-NodeJS-Application/
  */
-
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { Application } from 'express';
