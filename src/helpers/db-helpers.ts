@@ -3,6 +3,7 @@
  */
 import { Db } from 'orientjs';
 import bcrypt from 'bcrypt';
+import {DbQuery} from '../express-auth-types';
 /**
  * Get a vertex by a value in a property from orient db
  * @param vertexClassName {string}
@@ -30,17 +31,24 @@ export const getVerticesByType = (vertexClassName: string, db: Db) => {
 	}
 	throw new Error('Missing Parameters');
 }
-
-export const getVerticesByQuery = (vertexClassName: string, queryObj: any, db: Db) => {
-	console.log('getVerticesByQuery, queryObj=', queryObj);
+/**
+ * Perform a query against the DB
+ * @param vertexClassName {string}
+ * @param queryObj {DbQuery}
+ * @param db {Db}
+ * @returns {any[]}
+ */
+export const getVerticesByQuery = (vertexClassName: string, queryObj: DbQuery, db: Db) => {
 	if (vertexClassName && queryObj && db) {
 		let query = `select from ${vertexClassName}`;
 		Object.keys(queryObj).forEach((key: string, idx: number) => {
-			const keyVal = queryObj[key];
-			if (idx === 0) {
-				query += ` where ${key}="${keyVal}"`;
-			}else{
-				query += ` and ${key}="${keyVal}"`;
+			if (key !== 'queryOperator') {
+				const keyVal = queryObj[key];
+				if (idx === 0) {
+					query += ` where ${key} ${queryObj.queryOperator} "${keyVal}"`;
+				}else{
+					query += ` and ${key} ${queryObj.queryOperator} "${keyVal}"`;
+				}
 			}
 		});
 		console.log('getVerticesByQuery, query=', query);

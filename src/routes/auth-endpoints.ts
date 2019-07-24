@@ -1,12 +1,12 @@
 /**
- * This file sets up all the user authentication routes
+ * This file sets up all the user authentication/registration/logout routes and swagger shared elements
  * @exports initClientEndpoints
  */
 import { Application, Request, Response, NextFunction } from 'express';
 import { Db } from 'orientjs';
+import passport from 'passport';
 import { createVertex, getVertexByProperty, createPassword } from '../helpers/db-helpers';
 import { PersonDocument } from '../models/Person';
-import passport from 'passport';
 import { logger } from '../config/logger';
 import authReqMiddleware from '../config/restrict-path';
 
@@ -15,6 +15,25 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 * @swagger
 	 * components:
 	 *   schemas:
+	 *     Error:
+	 *       type: object
+	 *       properties:
+	 *         data:
+	 *           type: object
+	 *         hasMore:
+	 *           type: number
+	 *         id:
+	 *           type: number
+	 *         message:
+	 *           type: string
+	 *         name:
+	 *           type: string
+	 *         previous:
+	 *           type: array
+	 *           items:
+	 *             type: object
+	 *         type:
+	 *           type: string
 	 *     Log:
 	 *       type: object
 	 *       properties:
@@ -39,8 +58,6 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *               type: string
 	 *             password:
 	 *               type: string
-	 *             uuid:
-	 *               type: string
 	 *     Vertex:
 	 *       type: object
 	 *       properties:
@@ -55,8 +72,14 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *         '@version':
 	 *            type: string
 	 *   responses:
+	 *     Error:
+	 *       description: Error Object
+	 *       content:
+	 *         application/json:
+	 *           schema:
+	 *             $ref: '#/components/schemas/Error'
 	 *     Message:
-	 *       description: Message object
+	 *       description: Message Object
 	 *       content:
 	 *         application/json:
 	 *           schema:
@@ -71,21 +94,36 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *           schema:
 	 *             $ref: '#/components/schemas/Person'
 	 *     Vertex:
-	 *         description: Individual Vertex
+	 *         description: Vertex Object
 	 *         content:
 	 *           application/json:
 	 *             schema:
+	 *               $ref: '#/components/schemas/Vertex'
+	 *     VertexArray:
+	 *       description: Array of vertices
+	 *       content:
+	 *         application/json:
+	 *           schema:
+	 *             type: array
+	 *             items:
 	 *               $ref: '#/components/schemas/Vertex'
 	 *   parameters:
 	 *     ObjectQueryParam:
 	 *       in: query
 	 *       name: params
+	 *       description: A JSON object that includes the query parameters to query the DB
 	 *       schema:
 	 *         type: object
 	 *         additionalProperties:
 	 *           type: object
 	 *       style: form
 	 *       explode: true
+	 *     DbQueryOperatorParam:
+	 *       in: query
+	 *       name: queryOperator
+	 *       schema:
+	 *         type: string
+	 *         enum: [=, like, <, <=, '>', '>=', '<>', BETWEEN, IS, INSTANCEOF, IN, CONTAINS, CONTAINSALL, CONTAINSKEY, CONTAINSVALUE, CONTAINSTEXT, MATCHES]
 	 */
 
 	/**
@@ -165,6 +203,8 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *               oneOf:
 	 *                 - $ref: '#/components/responses/Person'
 	 *                 - $ref: '#/components/responses/Message'
+	 *       500:
+	 *         $ref: '#/components/responses/Error'
 	 *     requestBody:
 	 *       required: true
 	 *       content:
@@ -256,6 +296,8 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *         $ref: '#/components/responses/Message'
 	 *       401:
 	 *         $ref: '#/components/responses/Message'
+	 *       500:
+	 *         $ref: '#/components/responses/Error'
 	 */
 	app.get('/logout', authReqMiddleware, (req: Request, res: Response) => {
 		const {first_name, last_name, email} = req.user;
