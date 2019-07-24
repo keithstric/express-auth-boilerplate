@@ -18,10 +18,10 @@ The following services are provided by this project:
 The following explains the directory structure of this project
 
 * `client` - This is the directory where you will place your client application. This currently has a React project initialized
-* `orientdb` - This directory contains files required for OrientDB
+* `orientdb` - This directory contains files required for the OrientDB Docker container
 	* `backup` - Backups
 	* `databases` - Contains the Database Schema and data
-* `redisData` - Redis data
+* `redisData` - Redis data for the Redis Docker Container
 * `src` - Contains the source code for the express application
 	* `config` - Directory for server configuration files (i.e. DB, Passport, etc.)
 	* `controllers` - Directory for controller files

@@ -11,6 +11,7 @@ import bcrypt from 'bcrypt';
  * @param db {Db}
  */
 export const getVertexByProperty = (vertexClassName: string, propertyName: string, value: string|number, db: Db) => {
+	vertexClassName = vertexClassName || 'V';
 	if (vertexClassName && propertyName && value && db) {
 		const whereObj: any = {};
 		whereObj[propertyName] = value;
@@ -26,6 +27,24 @@ export const getVertexByProperty = (vertexClassName: string, propertyName: strin
 export const getVerticesByType = (vertexClassName: string, db: Db) => {
 	if (vertexClassName && db) {
 		return db.select().from(vertexClassName).all();
+	}
+	throw new Error('Missing Parameters');
+}
+
+export const getVerticesByQuery = (vertexClassName: string, queryObj: any, db: Db) => {
+	console.log('getVerticesByQuery, queryObj=', queryObj);
+	if (vertexClassName && queryObj && db) {
+		let query = `select from ${vertexClassName}`;
+		Object.keys(queryObj).forEach((key: string, idx: number) => {
+			const keyVal = queryObj[key];
+			if (idx === 0) {
+				query += ` where ${key}="${keyVal}"`;
+			}else{
+				query += ` and ${key}="${keyVal}"`;
+			}
+		});
+		console.log('getVerticesByQuery, query=', query);
+		return db.query(query).all();
 	}
 	throw new Error('Missing Parameters');
 }

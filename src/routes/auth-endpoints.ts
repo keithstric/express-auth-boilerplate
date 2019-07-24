@@ -8,48 +8,97 @@ import { createVertex, getVertexByProperty, createPassword } from '../helpers/db
 import { PersonDocument } from '../models/Person';
 import passport from 'passport';
 import { logger } from '../config/logger';
+import authReqMiddleware from '../config/restrict-path';
 
 const initAuthEndpoints = (app: Application, db: Db) => {
 	/**
 	 * @swagger
-	 * definitions:
-	 *   Person:
-	 *     type: object
-	 *     properties:
-	 *       first_name:
-	 *         type: string
-	 *       last_name:
-	 *         type: string
-	 *       email:
-	 *         type: string
-	 *       password:
-	 *         type: string
+	 * components:
+	 *   schemas:
+	 *     Log:
+	 *       type: object
+	 *       properties:
+	 *         message:
+	 *           type: string
+	 *         level:
+	 *           type: string
+	 *         service:
+	 *           type: string
+	 *         timestamp:
+	 *           type: string
+	 *     Person:
+	 *       allOf:
+	 *         - $ref: '#/components/schemas/Vertex'
+	 *         - type: object
+	 *           properties:
+	 *             first_name:
+	 *               type: string
+	 *             last_name:
+	 *               type: string
+	 *             email:
+	 *               type: string
+	 *             password:
+	 *               type: string
+	 *             uuid:
+	 *               type: string
+	 *     Vertex:
+	 *       type: object
+	 *       properties:
+	 *         uuid:
+	 *           type: string
+	 *         '@class':
+	 *           type: string
+	 *         '@rid':
+	 *            type: string
+	 *         '@type':
+	 *            type: string
+	 *         '@version':
+	 *            type: string
+	 *   responses:
+	 *     Message:
+	 *       description: Message object
+	 *       content:
+	 *         application/json:
+	 *           schema:
+	 *             type: object
+	 *             properties:
+	 *               message:
+	 *                 type: string
+	 *     Person:
+	 *       description: Person Object
+	 *       content:
+	 *         application/json:
+	 *           schema:
+	 *             $ref: '#/components/schemas/Person'
+	 *     Vertex:
+	 *         description: Individual Vertex
+	 *         content:
+	 *           application/json:
+	 *             schema:
+	 *               $ref: '#/components/schemas/Vertex'
+	 *   parameters:
+	 *     ObjectQueryParam:
+	 *       in: query
+	 *       name: params
+	 *       schema:
+	 *         type: object
+	 *         additionalProperties:
+	 *           type: object
+	 *       style: form
+	 *       explode: true
 	 */
 
 	/**
 	 * @swagger
 	 * tags:
-	 *   - name: default
 	 *   - name: authentication
 	 *     description: The Registration and Login process
+	 *   - name: system
+	 *     description: System Endpoints
+	 *   - name: Db
+	 *     description: Database Endpoints
 	 */
 
-	/**
-	 * Route Middleware to redirect to the login page if there isn't an established session
-	 * @param req {Request}
-	 * @param res {Response}
-	 * @param next {Function}
-	 */
-	const authReqMiddleware = (req: Request, res: Response, next: NextFunction) => {
-		// console.log('authReqMiddleware, req.user=', req.user);
-		// console.log('authReqMiddleware, req.isAuthenticated=', req.isAuthenticated());
-		if (!req.isAuthenticated()) {
-			// console.log('redirectLogin route middleware, No user, redirecting to login');
-			res.status(401).send({message: 'Not Authenticated'});
-		}else {
-			next();
-		}
-	};
 	/**
 	 * @swagger
 	 * /login:
@@ -57,24 +106,29 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *     tags:
 	 *       - authentication
 	 *     description: Authentication via passport.authenticate, calls passport middleware. Callback executed if authentication is successful
-	 *     produces:
-	 *       - text/html
 	 *     responses:
 	 *       200:
-	 *         description: login
+	 *         description: JSON object containing a message or Person
 	 *         content:
-	 *           text/html
-	 *     parameters:
-	 *       - name: email
-	 *         description: User's email address
-	 *         in: formData
-	 *         required: true
-	 *         type: string
-	 *       - name: password
-	 *         description: User's password
-	 *         in: formData
-	 *         required: true
-	 *         type: string
+	 *           application/json:
+	 *             schema:
+	 *               oneOf:
+	 *                 - $ref: '#/components/responses/Person'
+	 *                 - $ref: '#/components/responses/Message'
+	 *     requestBody:
+	 *       required: true
+	 *       content:
+	 *         application/x-www-form-urlencoded:
+	 *           schema:
+	 *             type: object
+	 *             required: [email, password]
+	 *             properties:
+	 *               email:
+	 *                 description: User's email address
+	 *                 type: string
+	 *               password:
+	 *                 description: User's password
+	 *                 type: string
 	 */
 	app.post('/login', (req: Request, res: Response, next: NextFunction) => {
 		passport.authenticate('local', (err: Error, user: PersonDocument, info: any) => {
@@ -86,8 +140,10 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 					if (err) {
 						return next(err);
 					}
+					const {first_name, last_name, email} = user;
+					logger.info(`Logged In: ${first_name} ${last_name}: <${email}>`);
 					return res.send(user);
-				})
+				});
 			}else{
 				return res.send(info);
 			}
@@ -100,43 +156,43 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *     tags:
 	 *       - authentication
 	 *     description: register a user
-	 *     produces:
-	 *       - text/html
 	 *     responses:
 	 *       200:
-	 *         description: register
+	 *         description: JSON object containing a message or Person
 	 *         content:
-	 *           text/html
-	 *     parameters:
-	 *       - name: first_name
-	 *         description: First Name
-	 *         in: formData
-	 *         required: true
-	 *         type: string
-	 *       - name: last_name
-	 *         description: Last Name
-	 *         in: formData
-	 *         required: true
-	 *         type: string
-	 *       - name: email
-	 *         description: User's email address
-	 *         in: formData
-	 *         required: true
-	 *         type: string
-	 *       - name: password
-	 *         description: User's password
-	 *         in: formData
-	 *         required: true
-	 *         type: string
-	 *       - name: verify_password
-	 *         description: Verify the password password
-	 *         in: formData
-	 *         required: true
-	 *         type: string
+	 *           application/json:
+	 *             schema:
+	 *               oneOf:
+	 *                 - $ref: '#/components/responses/Person'
+	 *                 - $ref: '#/components/responses/Message'
+	 *     requestBody:
+	 *       required: true
+	 *       content:
+	 *         application/x-www-form-urlencoded:
+	 *           schema:
+	 *             type: object
+	 *             required: [first_name, last_name, email, password, verify_password]
+	 *             properties:
+	 *               first_name:
+	 *                 description: First Name
+	 *                 type: string
+	 *               last_name:
+	 *                 description: Last Name
+	 *                 type: string
+	 *               email:
+	 *                 description: User's email address
+	 *                 type: string
+	 *               password:
+	 *                 description: User's password
+	 *                 type: string
+	 *               verify_password:
+	 *                 description: User's password
+	 *                 type: string
 	 */
 	app.post('/register', (req: Request, res: Response) => {
 		// TODO: This should actually be moved to a controller or something similar
 		const {first_name, last_name, email, password, verify_password} = req.body;
+		const name = `${first_name} ${last_name}: <${email}>`;
 		getVertexByProperty('Person', 'email', email.toLowerCase(), db).then((existingPerson: PersonDocument) => {
 			return existingPerson;
 		}).then((existingPerson: PersonDocument) => {
@@ -160,7 +216,7 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 		}).then((newPerson: PersonDocument) => {
 			createVertex('Person', newPerson, db).then((personVertex: PersonDocument) => {
 				if (personVertex) {
-					logger.info('Created person: %s with email %s', personVertex.first_name + ' ' + personVertex.last_name, personVertex.email);
+					logger.info(`Person vertex created for ${name} with uuid: ${personVertex.uuid}`);
 					req.login(personVertex, (err) => {
 						if (err) {
 							throw err;
@@ -173,6 +229,8 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 			}).catch((err: Error) => {
 				logger.error('Error Occurred at POST route /register: %s', err.message);
 				res.status(500).send(err);
+			}).finally(() => {
+				logger.info(`Registered User: ${name}`);
 			});
 			return false; // Prevent Bluebird error: "Warning: a promise was created in a handler but was not returned from it"
 		}).catch((err: Error) => {
@@ -193,21 +251,21 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *     tags:
 	 *       - authentication
 	 *     description: Logout the user, destroy the session, clear the cookie and redirect to login
-	 *     produces:
-	 *       text/html
 	 *     responses:
 	 *       200:
-	 *         description: logout
-	 *         content:
-	 *           text/html
+	 *         $ref: '#/components/responses/Message'
+	 *       401:
+	 *         $ref: '#/components/responses/Message'
 	 */
 	app.get('/logout', authReqMiddleware, (req: Request, res: Response) => {
+		const {first_name, last_name, email} = req.user;
 		req.logout();
 		req.session.destroy((err) => {
 			if (err) {
 				return res.status(500).send(err);
 			}
 			res.clearCookie(process.env.WEB_SESS_NAME);
+			logger.info(`Logged Out: ${first_name} ${last_name}: <${email}>`);
 			res.send({message: 'success'});
 		});
 	});

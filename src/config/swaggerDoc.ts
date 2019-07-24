@@ -9,28 +9,36 @@
  */
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
-import { Application } from 'express';
+import { Application, Request, Response } from 'express';
 
 const options = {
 	definition: {
-		swagger: '2.0',
+		openapi: '3.0.0',
 		info: {
-			title: 'Makers Unite',
+			title: 'express-auth-boilerplate',
 			version: '0.1.0',
-			description: 'Social App for Makers to connect',
+			description: 'Boilerplate api for authentication and db queries',
 			contact: {
-				name: 'Keith Strickland',
-				email: 'keithstric@gmail.com'
+				name: 'Red Pill Now',
+				email: 'info@redpillnow.com',
+				url: 'https://www.redpillnow.com'
 			}
 		},
 		basePath: '/'
 	},
-	apis: ['./dist/routes/auth-endpoints.js']
+	apis: [
+		'./dist/routes/auth-endpoints.js',
+		'./dist/routes/system-endpoints.js',
+		'./dist/routes/db-endpoints.js'
+	]
 };
 
 const swaggerSpec = swaggerJsdoc(options);
 const swaggerDocs = (app: Application) => {
 	app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+	app.get('/api-docs.json', (req: Request, res: Response) => {
+		res.send(swaggerSpec);
+	});
 };
 
 export default swaggerDocs;
