@@ -7,11 +7,13 @@ This is a boilerplate project to setup express, passport and orientdb. API Route
 The following services are provided by this project:
 
 * Express.js Application
-* Passport Authentication
+	* Passport Authentication (local)
+	* Winston logging to files and console
+	* Swagger docs (/api-docs)
+	* Swagger json file (/api-docs.json)
+	* Base React client application
 * OrientDB
 * Redis - For pub/sub and Session storage
-* Winston logging to files and console
-* Base React client application
 
 ## Directory structure
 
@@ -24,6 +26,7 @@ The following explains the directory structure of this project
 * `redisData` - Redis data for the Redis Docker Container
 * `src` - Contains the source code for the express application
 	* `config` - Directory for server configuration files (i.e. DB, Passport, etc.)
+		* `swaggerDoc.ts` - Swagger middleware configuration, shared components and tags
 	* `controllers` - Directory for controller files
 	* `helpers` - Directory for common helper type files
 	* `models` - Directory for Data Model storage
@@ -145,5 +148,5 @@ To stop the Docker environment run:
 * [passport](https://passportjs.org) - Web Authentication
 * [winston](https://www.npmjs.com/package/winston) - A Logger
 * [swagger](https://swagger.io) - API Documentation
-* [typescript](https://www.typescriptlang.org/)
+* [typescript](https://www.typescriptlang.org)
 * [react](https://reactjs.org)
