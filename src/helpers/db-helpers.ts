@@ -3,7 +3,7 @@
  */
 import { Db } from 'orientjs';
 import bcrypt from 'bcrypt';
-import {DbQuery} from '../express-auth-types';
+import {IDbQuery} from '../express-auth-types';
 /**
  * Get a vertex by a value in a property from orient db
  * @param vertexClassName {string}
@@ -34,11 +34,11 @@ export const getVerticesByType = (vertexClassName: string, db: Db) => {
 /**
  * Perform a query against the DB
  * @param vertexClassName {string}
- * @param queryObj {DbQuery}
+ * @param queryObj {IDbQuery}
  * @param db {Db}
  * @returns {any[]}
  */
-export const getVerticesByQuery = (vertexClassName: string, queryObj: DbQuery, db: Db) => {
+export const getVerticesByQuery = (vertexClassName: string, queryObj: IDbQuery, db: Db) => {
 	if (vertexClassName && queryObj && db) {
 		let query = `select from ${vertexClassName}`;
 		Object.keys(queryObj).forEach((key: string, idx: number) => {

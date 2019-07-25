@@ -31,7 +31,7 @@ const initDbEndpoints = (app: Application, db: Db) => {
 		getVerticesByQuery('V', req.query, db).then((resp: any) => {
 			res.send(resp);
 		}).catch((err: Error) => {
-			logger.error(`Error occurred at GET route /vertices/:vertexType/:vertexUuid: ${err.message}`);
+			logger.error(`Error occurred at GET route /vertices: ${err.message}`);
 			res.status(500).send(err);
 		});
 	});
@@ -79,11 +79,11 @@ const initDbEndpoints = (app: Application, db: Db) => {
 	});
 	/**
 	 * @swagger
-	 * /vertex/{vertexUuid}:
+	 * /vertex/{vertexId}:
 	 *   get:
 	 *     tags:
 	 *       - Db
-	 *     description: Get a specific vertex by uuid (slower than providing the type)
+	 *     description: Get a specific vertex by id (slower than providing the type)
 	 *     responses:
 	 *       200:
 	 *         $ref: '#/components/responses/Vertex'
@@ -92,18 +92,18 @@ const initDbEndpoints = (app: Application, db: Db) => {
 	 *       500:
 	 *         $ref: '#/components/responses/Error'
 	 *     parameters:
-	 *       - name: vertexUuid
-	 *         description: the uuid of the vertex
+	 *       - name: vertexId
+	 *         description: the id of the vertex
 	 *         in: path
 	 *         required: true
 	 *         schema:
 	 *           type: string
 	 */
-	app.get('/vertex/:vertexUuid', authReqMiddleware, (req: Request, res: Response) => {
-		getVertexByProperty(null, 'uuid', req.params.vertexUuid, db).then((resp: any) => {
+	app.get('/vertex/:vertexId', authReqMiddleware, (req: Request, res: Response) => {
+		getVertexByProperty(null, 'id', req.params.vertexId, db).then((resp: any) => {
 			res.send(resp);
 		}).catch((err: Error) => {
-			logger.error(`Error occurred at GET route /vertices/:vertexUuid: ${err.message}`);
+			logger.error(`Error occurred at GET route /vertex/:vertexId: ${err.message}`);
 			res.status(500).send(err);
 		});
 	});

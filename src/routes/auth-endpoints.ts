@@ -20,13 +20,7 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *     description: Authentication via passport.authenticate, calls passport middleware. Callback executed if authentication is successful
 	 *     responses:
 	 *       200:
-	 *         description: JSON object containing a message or Person
-	 *         content:
-	 *           application/json:
-	 *             schema:
-	 *               oneOf:
-	 *                 - $ref: '#/components/responses/Person'
-	 *                 - $ref: '#/components/responses/Message'
+	 *         $ref: '#/components/responses/Person'
 	 *     requestBody:
 	 *       required: true
 	 *       content:
@@ -119,8 +113,7 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 						first_name,
 						last_name,
 						email,
-						password: hashedPassword,
-						uuid: db.rawExpression('format("%s", uuid())')
+						password: hashedPassword
 					};
 					return newPerson;
 				}
@@ -130,7 +123,7 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 		}).then((newPerson: PersonDocument) => {
 			createVertex('Person', newPerson, db).then((personVertex: PersonDocument) => {
 				if (personVertex) {
-					logger.info(`Person vertex created for ${name} with uuid: ${personVertex.uuid}`);
+					logger.info(`Person vertex created for ${name} with id: ${personVertex.id}`);
 					req.login(personVertex, (err) => {
 						if (err) {
 							throw err;

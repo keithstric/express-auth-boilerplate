@@ -1,5 +1,6 @@
 import { Application, Request, Response } from 'express';
 import { Logger, QueryOptions } from 'winston';
+import { ILogEntry } from '../express-auth-types';
 import authReqMiddleware from '../config/restrict-path';
 
 const initSystemEndpoints = (app: Application, logger: Logger) => {
@@ -60,7 +61,7 @@ const initSystemEndpoints = (app: Application, logger: Logger) => {
 			order: req.query.order || 'desc',
 			fields: ['message','level','service','timestamp']
 		};
-		logger.query(logOpts, (err, results) => {
+		logger.query(logOpts, (err: Error, results: ILogEntry[]) => {
 			if (err) {
 				res.status(500).send(err);
 			}

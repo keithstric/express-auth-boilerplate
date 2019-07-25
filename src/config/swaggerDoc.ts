@@ -24,213 +24,213 @@ const options = {
 				url: 'https://www.redpillnow.com'
 			}
 		},
-		"components": {
-			"schemas": {
-				"Error": {
-					"type": "object",
-					"properties": {
-						"data": {
-							"type": "object"
+		components: {
+			schemas: {
+				Error: {
+					type: 'object',
+					properties: {
+						data: {
+							type: 'object'
 						},
-						"hasMore": {
-							"type": "number"
+						hasMore: {
+							type: 'number'
 						},
-						"id": {
-							"type": "number"
+						id: {
+							type: 'number'
 						},
-						"message": {
-							"type": "string"
+						message: {
+							type: 'string'
 						},
-						"name": {
-							"type": "string"
+						name: {
+							type: 'string'
 						},
-						"previous": {
-							"type": "array",
-							"items": {
-								"type": "object"
+						previous: {
+							type: 'array',
+							items: {
+								type: 'object'
 							}
 						},
-						"type": {
-							"type": "string"
+						type: {
+							type: 'string'
 						}
 					}
 				},
-				"Log": {
-					"type": "object",
-					"properties": {
-						"message": {
-							"type": "string"
+				Log: {
+					type: 'object',
+					properties: {
+						message: {
+							type: 'string'
 						},
-						"level": {
-							"type": "string"
+						level: {
+							type: 'string'
 						},
-						"service": {
-							"type": "string"
+						service: {
+							type: 'string'
 						},
-						"timestamp": {
-							"type": "string"
+						timestamp: {
+							type: 'string'
 						}
 					}
 				},
-				"Person": {
-					"allOf": [
+				Person: {
+					allOf: [
 						{
-							"$ref": "#/components/schemas/Vertex"
-						},
-						{
-							"type": "object",
-							"properties": {
-								"first_name": {
-									"type": "string"
+							'$ref': '#/components/schemas/Vertex'
+						},{
+							type: 'object',
+							properties: {
+								first_name: {
+									type: 'string'
 								},
-								"last_name": {
-									"type": "string"
+								last_name: {
+									type: 'string'
 								},
-								"email": {
-									"type": "string"
+								email: {
+									type: 'string'
 								},
-								"password": {
-									"type": "string"
+								password: {
+									type: 'string'
 								}
 							}
 						}
 					]
 				},
-				"Vertex": {
-					"type": "object",
-					"properties": {
-						"uuid": {
-							"type": "string"
+				Vertex: {
+					type: 'object',
+					properties: {
+						'@class': {
+							type: 'string'
 						},
-						"@class": {
-							"type": "string"
+						'@rid': {
+							type: 'string'
 						},
-						"@rid": {
-							"type": "string"
+						'@type': {
+							type: 'string'
 						},
-						"@type": {
-							"type": "string"
+						'@version': {
+							type: 'string'
 						},
-						"@version": {
-							"type": "string"
+						created_date: {
+							type: 'string'
+						},
+						id: {
+							type: 'string'
 						}
 					}
 				}
 			},
-			"responses": {
-				"Error": {
-					"description": "Error Object",
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Error"
+			responses: {
+				Error: {
+					description: 'Error Object',
+					content: {
+						'application/json': {
+							schema: {
+								'$ref': '#/components/schemas/Error'
 							}
 						}
 					}
 				},
-				"Message": {
-					"description": "Message Object",
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"message": {
-										"type": "string"
+				Message: {
+					description: 'Message Object',
+					content: {
+						'application/json': {
+							schema: {
+								type: 'object',
+								properties: {
+									message: {
+										type: 'string'
 									}
 								}
 							}
 						}
 					}
 				},
-				"Person": {
-					"description": "Person Object",
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Person"
+				Person: {
+					description: 'Person Object',
+					content: {
+						'application/json': {
+							schema: {
+								'$ref': '#/components/schemas/Person'
 							}
 						}
 					}
 				},
-				"Vertex": {
-					"description": "Vertex Object",
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Vertex"
+				Vertex: {
+					description: 'Vertex Object',
+					content: {
+						'application/json': {
+							schema: {
+								'$ref': '#/components/schemas/Vertex'
 							}
 						}
 					}
 				},
-				"VertexArray": {
-					"description": "Array of vertices",
-					"content": {
-						"application/json": {
-							"schema": {
-								"type": "array",
-								"items": {
-									"$ref": "#/components/schemas/Vertex"
+				VertexArray: {
+					description: 'Array of vertices',
+					content: {
+						'application/json': {
+							schema: {
+								type: 'array',
+								items: {
+									'$ref': '#/components/schemas/Vertex'
 								}
 							}
 						}
 					}
 				}
 			},
-			"parameters": {
-				"ObjectQueryParam": {
-					"in": "query",
-					"name": "params",
-					"description": "A JSON object that includes the query parameters to query the DB",
-					"schema": {
-						"type": "object",
-						"additionalProperties": {
-							"type": "object"
+			parameters: {
+				ObjectQueryParam: {
+					in: 'query',
+					name: 'params',
+					description: 'A JSON object that includes the query parameters to query the DB',
+					schema: {
+						type: 'object',
+						additionalProperties: {
+							type: 'object'
 						}
 					},
-					"style": "form",
-					"explode": true
+					style: 'form',
+					explode: true
 				},
-				"DbQueryOperatorParam": {
-					"in": "query",
-					"name": "queryOperator",
-					"schema": {
-						"type": "string",
-						"enum": [
-							"=",
-							"like",
-							"<",
-							"<=",
-							">",
-							">=",
-							"<>",
-							"BETWEEN",
-							"IS",
-							"INSTANCEOF",
-							"IN",
-							"CONTAINS",
-							"CONTAINSALL",
-							"CONTAINSKEY",
-							"CONTAINSVALUE",
-							"CONTAINSTEXT",
-							"MATCHES"
+				DbQueryOperatorParam: {
+					in: 'query',
+					name: 'queryOperator',
+					schema: {
+						type: 'string',
+						enum: [
+							'=',
+							'like',
+							'<',
+							'<=',
+							'>',
+							'>=',
+							'<>',
+							'BETWEEN',
+							'IS',
+							'INSTANCEOF',
+							'IN',
+							'CONTAINS',
+							'CONTAINSALL',
+							'CONTAINSKEY',
+							'CONTAINSVALUE',
+							'CONTAINSTEXT',
+							'MATCHES'
 						]
 					}
 				}
 			}
 		},
-		"tags": [
+		tags: [
 			{
-				"name": "authentication",
-				"description": "The Registration and Login process"
-			},
-			{
-				"name": "system",
-				"description": "System Endpoints"
-			},
-			{
-				"name": "Db",
-				"description": "Database Endpoints"
+				name: 'authentication',
+				description: 'The Registration and Login process'
+			},{
+				name: 'system',
+				description: 'System Endpoints'
+			},{
+				name: 'Db',
+				description: 'Database Endpoints'
 			}
 		],
 		basePath: '/'

@@ -13,14 +13,14 @@ const initPassport = (app: Application, db: Db) => {
 	app.use(passport.initialize());
 	app.use(passport.session());
 
-	passport.serializeUser(function(user_uuid: string, done: any) {
-		// console.log('config/passport.ts, passport.serializeUser, user_uuid=', user_uuid);
-		done(null, user_uuid);
+	passport.serializeUser(function(user_id: string, done: any) {
+		// console.log('config/passport.ts, passport.serializeUser, user_id=', user_id);
+		done(null, user_id);
 	});
 
-	passport.deserializeUser(function(user_uuid: string, done: any) {
-		// console.log('config/passport.ts, passport.deserializeUser, user_uuid=', user_uuid);
-		done(null, user_uuid);
+	passport.deserializeUser(function(user_id: string, done: any) {
+		// console.log('config/passport.ts, passport.deserializeUser, user_id=', user_id);
+		done(null, user_id);
 	});
 	/**
 	 * Passport middleware. This is called from `passport.authenticate()`.

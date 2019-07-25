@@ -6,8 +6,8 @@ export interface PersonDocument {
 	email: string|undefined;
 	first_name: string|undefined;
 	last_name: string|undefined;
-	uuid: any|undefined;
 	password: string|undefined;
+	id?: string|undefined;
 	created_date?: string|undefined;
 	in_knows?: string[];
 	in_tutors?: string[];
@@ -26,7 +26,7 @@ export class Person implements PersonDocument {
 	email: string;
 	first_name: string;
 	last_name: string;
-	uuid: string;
+	id: string;
 	password: string;
 	created_date: string;
 	exists: boolean = false;
@@ -55,7 +55,7 @@ export class Person implements PersonDocument {
 			this.email = apiObj.email;
 			this.first_name = apiObj.first_name;
 			this.last_name = apiObj.last_name;
-			this.uuid = apiObj.uuid;
+			this.id = apiObj.id;
 			this.password = !this.password ? apiObj.password : this.password;
 		}
 	}
