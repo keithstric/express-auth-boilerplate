@@ -14,14 +14,13 @@ const initPassport = (app: Application, db: Db) => {
 	app.use(passport.session());
 
 	passport.serializeUser(function(user_id: string, done: any) {
-		// console.log('config/passport.ts, passport.serializeUser, user_id=', user_id);
 		done(null, user_id);
 	});
 
 	passport.deserializeUser(function(user_id: string, done: any) {
-		// console.log('config/passport.ts, passport.deserializeUser, user_id=', user_id);
 		done(null, user_id);
 	});
+
 	/**
 	 * Passport middleware. This is called from `passport.authenticate()`.
 	 * Will get the user from the database and compare passwords
@@ -30,8 +29,6 @@ const initPassport = (app: Application, db: Db) => {
 	 * the message is posted as a flash message
 	 */
 	passport.use(new passportLocal.Strategy({usernameField: 'email'}, (email: string, password: string, done: any) => {
-		// console.log('passport.ts, email=', email);
-		// console.log('passport.ts, password=', password);
 		const user = new Person(db);
 		user.init(email).then((person: any) => {
 			if (person) {

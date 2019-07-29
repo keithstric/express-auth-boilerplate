@@ -11,7 +11,7 @@ import { getVerticesByType, getVertexByProperty, getVerticesByQuery } from '../h
 const initDbEndpoints = (app: Application, db: Db) => {
 	/**
 	 * @swagger
-	 * /vertices:
+	 * /api/vertices:
 	 *   get:
 	 *     tags:
 	 *       - Db
@@ -27,17 +27,17 @@ const initDbEndpoints = (app: Application, db: Db) => {
 	 *       - $ref: '#/components/parameters/ObjectQueryParam'
 	 *       - $ref: '#/components/parameters/DbQueryOperatorParam'
 	 */
-	app.get('/vertices', authReqMiddleware, (req: Request, res: Response) => {
+	app.get('/api/vertices', authReqMiddleware, (req: Request, res: Response) => {
 		getVerticesByQuery('V', req.query, db).then((resp: any) => {
 			res.send(resp);
 		}).catch((err: Error) => {
-			logger.error(`Error occurred at GET route /vertices: ${err.message}`);
+			logger.error(`Error occurred at GET route /api/vertices: ${err.message}`);
 			res.status(500).send(err);
 		});
 	});
 	/**
 	 * @swagger
-	 * /vertices/{vertexType}:
+	 * /api/vertices/{vertexType}:
 	 *   get:
 	 *     tags:
 	 *       - Db
@@ -60,7 +60,7 @@ const initDbEndpoints = (app: Application, db: Db) => {
 	 *       - $ref: '#/components/parameters/ObjectQueryParam'
 	 *       - $ref: '#/components/parameters/DbQueryOperatorParam'
 	 */
-	app.get('/vertices/:vertexType', authReqMiddleware, (req: Request, res: Response) => {
+	app.get('/api/vertices/:vertexType', authReqMiddleware, (req: Request, res: Response) => {
 		if (Object.keys(req.query).length === 0) {
 			getVerticesByType(req.params.vertexType, db).then((resp: any[]) => {
 				res.send(resp);
@@ -72,14 +72,14 @@ const initDbEndpoints = (app: Application, db: Db) => {
 			getVerticesByQuery(req.params.vertexType, req.query, db).then((resp: any) => {
 				res.send(resp);
 			}).catch((err: Error) => {
-				logger.error(`Error occurred at GET route /vertices/:vertexType: ${err.message}`);
+				logger.error(`Error occurred at GET route /api/vertices/:vertexType: ${err.message}`);
 				res.status(500).send(err);
 			});
 		}
 	});
 	/**
 	 * @swagger
-	 * /vertex/{vertexId}:
+	 * /api/vertex/{vertexId}:
 	 *   get:
 	 *     tags:
 	 *       - Db
@@ -99,7 +99,7 @@ const initDbEndpoints = (app: Application, db: Db) => {
 	 *         schema:
 	 *           type: string
 	 */
-	app.get('/vertex/:vertexId', authReqMiddleware, (req: Request, res: Response) => {
+	app.get('/api/vertex/:vertexId', authReqMiddleware, (req: Request, res: Response) => {
 		getVertexByProperty(null, 'id', req.params.vertexId, db).then((resp: any) => {
 			res.send(resp);
 		}).catch((err: Error) => {

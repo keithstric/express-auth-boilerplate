@@ -6,7 +6,7 @@ import authReqMiddleware from '../config/restrict-path';
 const initSystemEndpoints = (app: Application, logger: Logger) => {
 	/**
 	 * @swagger
-	 * /logs:
+	 * /api/logs:
 	 *   get:
 	 *     tags:
 	 *       - system
@@ -52,7 +52,7 @@ const initSystemEndpoints = (app: Application, logger: Logger) => {
 	 *           type: string
 	 *           enum: [asc, desc]
 	 */
-	app.get('/logs', authReqMiddleware, (req: Request, res: Response) => {
+	app.get('/api/logs', authReqMiddleware, (req: Request, res: Response) => {
 		const logOpts: QueryOptions = {
 			from: req.query.from ? new Date(req.query.from) : new Date((new Date() as any) - (24 * 60 * 60 * 1000)),
 			until: req.query.until ? new Date(req.query.until) : new Date(),
