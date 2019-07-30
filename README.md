@@ -11,7 +11,7 @@ The following services are provided by this project:
 	* Winston logging to files and console
 	* Swagger docs (/api-docs)
 	* Swagger json file (/api-docs.json)
-	* Base React client application
+* Base React client application
 * OrientDB
 * Redis - For pub/sub and Session storage
 

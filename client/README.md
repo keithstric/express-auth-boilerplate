@@ -37,6 +37,30 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
+## What's Included
+
+This is just a basic application with a header and a few pages (login, home, register). No assumptions are made about what should be available and what shouldn't. Base routing is also included.
+
+* Components
+	* Layout
+		* Header.tsx - The application header
+		* Content.tsx - The content area where are pages are displayed
+	* AppContext.tsx - The application context as a High Order Component
+* Pages
+	* Home.tsx - The home page
+	* Login.tsx - The login page
+	* Register.tsx - The registration page
+* Style
+	* App.css - Some base CSS for the entire app
+	* Index.css - Body and code tag styles
+* App.tsx - The application wrapper
+* index.tsx - The entry point into the application, contains the Root component
+* react-app-env.d.ts - TypeScript reference
+* Root.tsx - This is the component rendered by index.tsx. Includes the Router and AppContext
+* Routes.tsx - This is App and individual routes for the application
+* serviceWorker.ts - The service worker
+* setupProxy.js - Proxy configuration for development mode only
+
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
