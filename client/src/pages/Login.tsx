@@ -40,6 +40,7 @@ class LoginPage extends PureComponent<ILoginPageProps> {
 				if (resp && resp.ok) {
 					return resp.json();
 				}
+				return null;
 			}).then((respJson: any) => {
 				if (respJson.message) {
 					this.setState({message: respJson.message});
