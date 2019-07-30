@@ -38,21 +38,21 @@ class LoginPage extends PureComponent<ILoginPageProps> {
 				body: JSON.stringify(payload)
 			}).then((resp: Response) => {
 				if (resp && resp.ok) {
-					resp.json().then((resp: any) => {
-						if (resp.message) {
-							this.setState({message: resp.message});
-						}else{
-							const user = resp;
-							delete user.db;
-							this.props.appContext.setUser(user);
-							this.setState({
-								email: '',
-								password: '',
-								message: ''
-							});
-							this.props.history.push('/');
-						}
+					return resp.json();
+				}
+			}).then((respJson: any) => {
+				if (respJson.message) {
+					this.setState({message: respJson.message});
+				}else{
+					const user = respJson;
+					delete user.db;
+					this.props.appContext.setUser(user);
+					this.setState({
+						email: '',
+						password: '',
+						message: ''
 					});
+					this.props.history.push('/');
 				}
 			}).catch((err: Error) => {
 				console.error('An error occurred during login:', err);

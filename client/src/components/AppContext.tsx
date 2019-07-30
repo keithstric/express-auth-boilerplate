@@ -3,40 +3,47 @@ import React, { Component } from 'react';
 export interface IAppContext {
 	user: any | undefined;
 	header: string | undefined;
-	setHeader: any,
-	setUser: any
+	authenticated: boolean;
+	setHeader: any;
+	setUser: any;
 }
 
 const AppContext = React.createContext({});
 
 export class AppProvider extends Component {
-	public state = {
-		user: undefined,
-		header: 'express-auth-boilerplate',
-		socketId: undefined
-	};
 
 	constructor(props: any) {
 		super(props);
-		this.setHeader = this.setHeader.bind(this);
-		this.setUser = this.setUser.bind(this);
+		const user = sessionStorage.getItem('express-auth:user');
+		const hasCookie = doesHttpOnlyCookieExist('expressAuthSession');
+		this.state = {
+			user: user ? JSON.parse(user) : null,
+			authenticated: sessionStorage.getItem('express-auth:user') && hasCookie ? true : false,
+			header: 'express-auth-boilerplate',
+			setHeader: this.setHeader,
+			setUser: this.setUser
+		};
 	}
 
-	setHeader(header: string) {
-		this.setState({header: header});
+	setHeader = (header: string) => {
+		this.setState({system: {header: header}});
 	}
 
-	setUser(user: any) {
-		this.setState({user: user});
+	setUser = (user: any) => {
+		if (user) {
+			sessionStorage.setItem('express-auth:user', JSON.stringify(user));
+		}
+		this.setState({
+			authenticated: user ? true : false,
+			user: user
+		});
 	}
 
 	render() {
 		return (
 			<AppContext.Provider
 				value={{
-					...this.state,
-					setHeader: this.setHeader,
-					setUser: this.setUser
+					...this.state
 				}}>
 				{this.props.children}
 			</AppContext.Provider>
@@ -60,6 +67,19 @@ export function withAppContext<
 		);
 	};
 }
+
+function doesHttpOnlyCookieExist(cookiename: string) {
+	var d = new Date();
+	d.setTime(d.getTime() + (1000));
+	var expires = "expires=" + d.toUTCString();
+
+	document.cookie = cookiename + "=new_value;path=/;" + expires;
+	if (document.cookie.indexOf(cookiename + '=') == -1) {
+		return true;
+	 } else {
+		return false;
+	 }
+ }
 
 export const AppConsumer = AppContext.Consumer;
 

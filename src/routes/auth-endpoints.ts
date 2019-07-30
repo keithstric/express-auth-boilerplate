@@ -176,7 +176,6 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 			res.clearCookie(process.env.WEB_SESS_NAME);
 			logger.info(`Logged Out: ${first_name} ${last_name}: <${email}>`);
 			res.send({message: 'success'});
-			res.redirect('/login');
 		});
 	});
 }

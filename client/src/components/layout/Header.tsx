@@ -5,7 +5,7 @@ import { withAppContext } from '../AppContext';
 import { Link } from 'react-router-dom';
 
 function Header(props: any) {
-	const {header, user} = props.appContext;
+	const {header, authenticated} = props.appContext;
 	return (
 		<header className='App-header horizontal'>
 			<div className="logoContainer headerItem">
@@ -19,13 +19,13 @@ function Header(props: any) {
 					<li>
 						<Link to="/">Home</Link>
 					</li>
-					<li hidden={!!user}>
+					<li hidden={authenticated}>
 						<Link to="/register">Register</Link>
 					</li>
-					<li hidden={!!user}>
+					<li hidden={authenticated}>
 						<Link to="/login">Login</Link>
 					</li>
-					<li hidden={!user}>
+					<li hidden={!authenticated}>
 						<Link to="/logout">Logout</Link>
 					</li>
 				</ul>
