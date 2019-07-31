@@ -30,7 +30,7 @@ const initPassport = (app: Application, db: Db) => {
 	 */
 	passport.use(new passportLocal.Strategy({usernameField: 'email'}, (email: string, password: string, done: any) => {
 		const user = new Person(db);
-		user.init(email).then((person: any) => {
+		user.findPersonByEmail(email).then((person: Person) => {
 			if (person) {
 				if (person.comparePassword(password)) {
 					done(null, person);
@@ -41,7 +41,7 @@ const initPassport = (app: Application, db: Db) => {
 				done(null, false, {message: `Email Address "${email}" not found`});
 			}
 		}).catch((err: Error) => {
-			logger.error('Error occurred in passport middleware: %s', err.message);
+			logger.error(`Error occurred in passport middleware: ${err.message}`);
 			done(err, false, {message: err.message});
 		});
 	}));

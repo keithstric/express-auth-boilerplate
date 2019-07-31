@@ -5,8 +5,8 @@
 import { Application, Request, Response, NextFunction } from 'express';
 import { Db } from 'orientjs';
 import passport from 'passport';
-import { createVertex, getVertexByProperty, createPassword } from '../helpers/db-helpers';
-import { PersonDocument } from '../models/Person';
+import { createPassword } from '../helpers/db-helpers';
+import { IPersonDocument, Person } from '../models/Person';
 import { logger } from '../config/logger';
 import authReqMiddleware from '../config/restrict-path';
 
@@ -37,7 +37,7 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *                 type: string
 	 */
 	app.post('/login', (req: Request, res: Response, next: NextFunction) => {
-		passport.authenticate('local', (err: Error, user: PersonDocument, info: any) => {
+		passport.authenticate('local', (err: Error, user: IPersonDocument, info: any) => {
 			if (err) {
 				return next(err);
 			}
@@ -94,62 +94,47 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *                 description: User's password
 	 *                 type: string
 	 *               verify_password:
-	 *                 description: User's password
+	 *                 description: Verify User's password
 	 *                 type: string
 	 */
 	app.post('/register', (req: Request, res: Response) => {
 		// TODO: This should actually be moved to a controller or something similar
 		const {first_name, last_name, email, password, verify_password} = req.body;
 		const name = `${first_name} ${last_name}: <${email}>`;
-		getVertexByProperty('Person', 'email', email.toLowerCase(), db).then((existingPerson: PersonDocument) => {
-			return existingPerson;
-		}).then((existingPerson: PersonDocument) => {
-			if (!existingPerson) {
-				if (password !== verify_password) {
-					throw new Error('Passwords do not match');
-				}else {
-					const hashedPassword = createPassword(password);
-					const newPerson: PersonDocument = {
-						first_name,
-						last_name,
-						email,
-						password: hashedPassword
-					};
-					return newPerson;
+		const hashedPassword = createPassword(password);
+		const person = new Person(db, {
+			first_name,
+			last_name,
+			email,
+			password: hashedPassword
+		});
+		if (password !== verify_password) {
+			throw new Error('Passwords do not match');
+		}else {
+			person.findPersonByEmail(email.toLowerCase()).then((existingPerson: Person) => {
+				if (!existingPerson) {
+					return person.save();
+				}else{
+					throw new Error(`User with email ${existingPerson.email} already exists!`);
 				}
-			}else{
-				throw new Error(`User with email ${existingPerson.email} already exists!`);
-			}
-		}).then((newPerson: PersonDocument) => {
-			createVertex('Person', newPerson, db).then((personVertex: PersonDocument) => {
-				if (personVertex) {
-					logger.info(`Person vertex created for ${name} with id: ${personVertex.id}`);
-					req.login(personVertex, (err) => {
+			}).then((savedPerson: Person) => {
+				if (savedPerson) {
+					logger.info(`Person vertex created for ${name} with id: ${savedPerson.id}`);
+					req.login(savedPerson, (err) => {
 						if (err) {
 							throw err;
 						}
-						res.send(personVertex);
+						res.send(savedPerson);
+						logger.info(`Registered User: ${name} with id ${savedPerson.id}`);
 					});
 				}else {
-					res.status(400).send(new Error('No result from user creation'));
+					res.status(400).send(new Error('No result from user creation for ${name} with email ${email}'));
 				}
 			}).catch((err: Error) => {
-				logger.error('Error Occurred at POST route /register: %s', err.message);
+				logger.error(`Error Occurred at POST route /register: ${err.message}`);
 				res.status(500).send(err);
-			}).finally(() => {
-				logger.info(`Registered User: ${name}`);
 			});
-			return false; // Prevent Bluebird error: "Warning: a promise was created in a handler but was not returned from it"
-		}).catch((err: Error) => {
-			if (err && err.message === `User with email ${email} already exists!`) {
-				res.send({"message": err.message});
-			}else if (err && err.message === 'Passwords do not match') {
-				res.send({"message": err.message});
-			}else{
-				logger.error('Error Occurred at POST route /register: %s', err.message);
-				res.status(500).send(err);
-			}
-		});
+		}
 	});
 	/**
 	 * @swagger

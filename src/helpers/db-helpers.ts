@@ -10,6 +10,7 @@ import {IDbQuery} from '../express-auth-types';
  * @param propertyName {string}
  * @param value {string|number}
  * @param db {Db}
+ * @returns {Promise<any>}
  */
 export const getVertexByProperty = (vertexClassName: string, propertyName: string, value: string|number, db: Db) => {
 	vertexClassName = vertexClassName || 'V';
@@ -24,6 +25,7 @@ export const getVertexByProperty = (vertexClassName: string, propertyName: strin
  * Get an array of vertex types
  * @param vertexClassName {string}
  * @param db {Db}
+ * @returns {Promise<any[]>}
  */
 export const getVerticesByType = (vertexClassName: string, db: Db) => {
 	if (vertexClassName && db) {
@@ -36,7 +38,7 @@ export const getVerticesByType = (vertexClassName: string, db: Db) => {
  * @param vertexClassName {string}
  * @param queryObj {IDbQuery}
  * @param db {Db}
- * @returns {any[]}
+ * @returns {Promise<any[]>}
  */
 export const getVerticesByQuery = (vertexClassName: string, queryObj: IDbQuery, db: Db) => {
 	if (vertexClassName && queryObj && db) {
@@ -59,6 +61,7 @@ export const getVerticesByQuery = (vertexClassName: string, queryObj: IDbQuery, 
 /**
  * Create a hashed password from the passed in password using bcrypt
  * @param typedPassword {string}
+ * @returns {string}
  */
 export const createPassword = (typedPassword: string) => {
 	if (typedPassword) {
@@ -72,6 +75,7 @@ export const createPassword = (typedPassword: string) => {
  * @param vertexClass {String}
  * @param payload {any}
  * @param db {Db}
+ * @returns {Promise<any>}
  */
 export const createVertex = (vertexClass: string, payload: any, db: Db) => {
 	if (vertexClass && payload && db) {
@@ -86,6 +90,7 @@ export const createVertex = (vertexClass: string, payload: any, db: Db) => {
  * @param toRid {string}
  * @param db {Db}
  * @param payload {any}
+ * @returns {Promise<any>}
  */
 export const createEdge = (label: string, fromRid: string, toRid: string, db: Db, payload?: any) => {
 	if (label && fromRid && toRid && db) {
@@ -102,6 +107,7 @@ export const createEdge = (label: string, fromRid: string, toRid: string, db: Db
  * @param rid {string}
  * @param payload {any}
  * @param db {Db}
+ * @returns {Promise<any>}
  */
 export const updateVertex = (rid: string, payload: any, db: Db) => {
 	if (rid && payload && Object.keys(payload).length > 0 && db) {
@@ -113,6 +119,7 @@ export const updateVertex = (rid: string, payload: any, db: Db) => {
  * Get the verex IDs for a label
  * @param vertex {any}
  * @param label {string}
+ * @return {string[]}
  */
 export const getVertexEdges = (vertex: any, label: string): string[] => {
 	if (vertex && label) {
