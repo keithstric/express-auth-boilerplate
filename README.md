@@ -140,6 +140,14 @@ To stop the Docker environment run:
 
 `npm run stop:docker`
 
+# The React client
+
+Documentation for the client is in `client/README.md`. The client server runs on `http://localhost:3000`. Pertinent requests are proxied to the express server (`http://localhost:3001`). To start the client:
+
+* Open a terminal
+* `cd client/`
+* run `npm start` - this will compile the client code and open a browser tab
+
 ## Node Projects of Interest
 
 * [node.js](https://nodejs.org) - Node.js

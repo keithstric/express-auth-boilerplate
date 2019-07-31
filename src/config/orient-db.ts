@@ -1,5 +1,5 @@
 /**
- * This file sets up the database connection
+ * This file sets up the database connection and returns it
  */
 import OrientDBClient, { ServerConfig } from 'orientjs';
 

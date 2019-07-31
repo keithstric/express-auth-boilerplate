@@ -9,17 +9,6 @@ export interface PersonDocument {
 	password: string|undefined;
 	id?: string|undefined;
 	created_date?: string|undefined;
-	in_knows?: string[];
-	in_tutors?: string[];
-	in_visited?: string[];
-	out_authored?: string[];
-	out_created?: string[];
-	out_knows?: string[];
-	out_liked?: string[];
-	out_locatedAt?: string[];
-	out_rated?: string[];
-	out_shared?: string[];
-	out_visited?: string[];
 }
 
 export class Person implements PersonDocument {

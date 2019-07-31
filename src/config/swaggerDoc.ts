@@ -1,6 +1,7 @@
 /**
  * This file sets up swagger-js and swagger-ui-express to
- * automatically generate swagger documentation and swagger.json.
+ * automatically generate swagger documentation and swagger.json. It also
+ * sets up the reusable models for swagger.
  * For jsDoc structure visit:
  * - https://github.com/Surnet/swagger-jsdoc/blob/master/docs/GETTING-STARTED.md
  * - https://github.com/Surnet/swagger-jsdoc/tree/master/example/v2

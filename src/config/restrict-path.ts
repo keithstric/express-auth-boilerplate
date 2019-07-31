@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 /**
- * Route Middleware to redirect to the login page if there isn't an established session
+ * Route Middleware to redirect to ensure a request is from an authenticated user
  * @param req {Request}
  * @param res {Response}
  * @param next {Function}
