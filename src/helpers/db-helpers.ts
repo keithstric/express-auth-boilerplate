@@ -77,7 +77,7 @@ export const createPassword = (typedPassword: string) => {
  * @param db {Db}
  * @returns {Promise<any>}
  */
-export const createVertex = (vertexClass: string, payload: any, db: Db) => {
+export const createVertex = (vertexClass: string, payload: any, db: Db): Promise<any> => {
 	if (vertexClass && payload && db) {
 		return db.create('VERTEX', vertexClass).set(payload).one();
 	}
@@ -92,7 +92,7 @@ export const createVertex = (vertexClass: string, payload: any, db: Db) => {
  * @param payload {any}
  * @returns {Promise<any>}
  */
-export const createEdge = (label: string, fromRid: string, toRid: string, db: Db, payload?: any) => {
+export const createEdge = (label: string, fromRid: string, toRid: string, db: Db, payload?: any): Promise<any> => {
 	if (label && fromRid && toRid && db) {
 		if (!payload) {
 			return db.create('EDGE', label).from(fromRid).to(toRid).one();
@@ -109,7 +109,7 @@ export const createEdge = (label: string, fromRid: string, toRid: string, db: Db
  * @param db {Db}
  * @returns {Promise<any>}
  */
-export const updateVertex = (rid: string, payload: any, db: Db) => {
+export const updateVertex = (rid: string, payload: any, db: Db): Promise<any> => {
 	if (rid && payload && Object.keys(payload).length > 0 && db) {
 		return db.update(rid).set(payload).one();
 	}

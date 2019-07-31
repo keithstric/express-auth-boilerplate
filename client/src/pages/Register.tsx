@@ -44,23 +44,24 @@ class RegisterPage extends PureComponent<IRegisterPageProps> {
 				body: JSON.stringify(payload)
 			}).then((resp: Response) => {
 				if (resp && resp.ok) {
-					resp.json().then((resp: any) => {
-						if (resp.message) {
-							this.setState({message: resp.message})
-						}else {
-							const user = resp;
-							delete user.db;
-							this.props.appContext.setUser(user);
-							this.setState({
-								first_name: '',
-								last_name: '',
-								email: '',
-								password: '',
-								verify_password: ''
-							});
-							this.props.history.push('/');
-						}
-					})
+					return resp.json();
+				}
+				return null;
+			}).then((respJson: any) => {
+				if (respJson.message) {
+					this.setState({message: respJson.message})
+				}else {
+					const user = respJson;
+					delete user.db;
+					this.props.appContext.setUser(user);
+					this.setState({
+						first_name: '',
+						last_name: '',
+						email: '',
+						password: '',
+						verify_password: ''
+					});
+					this.props.history.push('/');
 				}
 			});
 		}

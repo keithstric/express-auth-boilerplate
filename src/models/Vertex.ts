@@ -1,5 +1,7 @@
 import { Db } from 'orientjs';
-
+/**
+ * Interface for a vertex. This represents the structure received from OrientDb for any type of Vertex
+ */
 export interface IVertexDocument {
 	'@class'?: string;
 	'@fieldTypes'?: string;
@@ -10,7 +12,10 @@ export interface IVertexDocument {
 	id?: string;
 	db?: Db
 }
-
+/**
+ * The Vertex class
+ * @class {Vertex}
+ */
 export class Vertex implements IVertexDocument {
 	'@class'?: string;
 	'@fieldTypes'?: string;
@@ -20,12 +25,33 @@ export class Vertex implements IVertexDocument {
 	created_date?: string;
 	id?: string;
 	db?: Db;
-
+	/**
+	 * Create a new instance of the Vertex class
+	 * @param db {Db}
+	 * @constructor
+	 */
 	constructor(db: Db) {
 		if (db) {
 			this.db = db;
 		}else{
 			throw new Error('You must provide a Db');
 		}
+	}
+	/**
+	 * Get an object representing this class instance
+	 * @return {IPersonDocument}
+	 */
+	toObject(): IVertexDocument {
+		const obj = {...this};
+		delete obj.db;
+		return obj;
+	}
+	/**
+	 * Get a JSON string representing this class instance
+	 * @return {string};
+	 */
+	toJson(): string {
+		const obj = this.toObject();
+		return JSON.stringify(obj);
 	}
 }

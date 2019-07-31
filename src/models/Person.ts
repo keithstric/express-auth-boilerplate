@@ -2,14 +2,19 @@ import { Db } from 'orientjs';
 import { getVertexByProperty, createVertex } from '../helpers/db-helpers';
 import bcrypt from 'bcrypt';
 import { IVertexDocument, Vertex } from './Vertex';
-
+/**
+ * Interface for a Person. This should be the structure received from Orient DB for a Person
+ */
 export interface IPersonDocument extends IVertexDocument {
 	password: string;
 	last_name: string;
 	first_name: string;
 	email: string;
 }
-
+/**
+ * The Person class
+ * @class {Person}
+ */
 export class Person extends Vertex implements IPersonDocument {
 	email: string;
 	first_name: string;
@@ -17,7 +22,7 @@ export class Person extends Vertex implements IPersonDocument {
 	password: string;
 	exists: boolean = false;
 	/**
-	 * Create a new instance of the person class
+	 * Create a new instance of the Person class
 	 * @param db {Db}
 	 * @param apiObj {IPersonDocument}
 	 * @constructor
@@ -96,14 +101,14 @@ export class Person extends Vertex implements IPersonDocument {
 		throw new Error('You must provide a typedPassword to compare with');
 	}
 	/**
-	 * Get a payload to send to the db during a save operation
+	 * Get an object representing this class instance
 	 * @return {IPersonDocument}
 	 */
-	private _getPayload(): IPersonDocument {
-		const payload = {...this};
-		delete payload.db;
-		delete payload.exists;
-		return payload;
+	toObject(): IPersonDocument {
+		const obj = {...this};
+		delete obj.db;
+		delete obj.exists;
+		return obj;
 	}
 	/**
 	 * Save this model to the db
@@ -113,7 +118,7 @@ export class Person extends Vertex implements IPersonDocument {
 		if (this.id) {
 
 		}else {
-			return createVertex('Person', this._getPayload(), this.db).then((personResp: IPersonDocument) => {
+			return createVertex('Person', this.toObject(), this.db).then((personResp: IPersonDocument) => {
 				this._initObject(personResp);
 				return this;
 			});
