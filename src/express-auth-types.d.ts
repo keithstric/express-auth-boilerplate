@@ -31,24 +31,3 @@ export interface ILogEntry {
 	service: string;
 	timestamp: string;
 }
-/**
- * Interface for a Vertex
- */
-export interface IVertex {
-	'@class': string;
-	'@rid': string;
-	'@type': string;
-	'@version': string;
-	created_date: string;
-	id: string;
-	[x: string]: any;
-}
-/**
- * Interface for a Person
- */
-export interface IPerson extends IVertex {
-	first_name: string;
-	last_name: string;
-	email: string;
-	password: string;
-}
