@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { withAppContext, IAppContext } from '../components/AppContext';
 import { RouteComponentProps } from 'react-router';
+import PersonForm from '../components/personForm';
 
 interface IRegisterPageProps extends RouteComponentProps{
 	appContext: IAppContext;
@@ -68,75 +69,20 @@ class RegisterPage extends PureComponent<IRegisterPageProps> {
 	}
 
 	render() {
-		const {message, first_name, last_name, email, password, verify_password} = this.state;
+		const {message} = this.state;
+		const user = {
+			first_name: this.state.first_name,
+			last_name: this.state.last_name,
+			email: this.state.email,
+			password: this.state.password,
+			verify_password: this.state.verify_password
+		};
 		return (
 			<div className="container">
 				<div className="loginMessage" hidden={!message}>
 					{message}
 				</div>
-				<form onSubmit={this.onSubmit}>
-					<div className="formRow">
-						<label>First Name</label>
-						<input
-							type="text"
-							className="formControl"
-							placeholder="Enter First Name"
-							name="first_name"
-							value={first_name}
-							onChange={this.onChange}
-						/>
-					</div>
-					<div className="formRow">
-						<label>Last Name</label>
-						<input
-							type="text"
-							className="formControl"
-							placeholder="Enter Last Name"
-							name="last_name"
-							value={last_name}
-							onChange={this.onChange}
-						/>
-					</div>
-					<div className="formRow">
-						<label>Email Address</label>
-						<input
-							type="email"
-							className="formControl"
-							placeholder="Enter Email Address"
-							name="email"
-							value={email}
-							onChange={this.onChange}
-						/>
-					</div>
-					<div className="formRow">
-						<label>Password</label>
-						<input
-							type="password"
-							className="formControl"
-							placeholder="Enter Password"
-							name="password"
-							value={password}
-							onChange={this.onChange}
-						/>
-					</div>
-					<div className="formRow">
-						<label>Verify Password</label>
-						<input
-							type="password"
-							className="formControl"
-							placeholder="Verify Password"
-							name="verify_password"
-							value={verify_password}
-							onChange={this.onChange}
-						/>
-					</div>
-					<div className="formActionContainer horizontal flex-end">
-						<button
-							type="submit">
-							Register
-						</button>
-					</div>
-				</form>
+				<PersonForm user={user} onSubmit={this.onSubmit} onChange={this.onChange} buttonText="Register" />
 			</div>
 		);
 	}

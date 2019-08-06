@@ -26,7 +26,7 @@ export class AppProvider extends Component {
 	}
 
 	setHeader = (header: string) => {
-		this.setState({system: {header: header}});
+		this.setState({header: header});
 	}
 
 	setUser = (user: any) => {

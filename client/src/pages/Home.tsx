@@ -28,6 +28,8 @@ class HomePage extends Component<IHomePageProps> {
 					this.setState({people: resp})
 				}
 			});
+		}else {
+			this.props.history.push('/login');
 		}
 	}
 

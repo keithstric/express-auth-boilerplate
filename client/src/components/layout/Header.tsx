@@ -19,6 +19,9 @@ function Header(props: any) {
 					<li>
 						<Link to="/">Home</Link>
 					</li>
+					<li hidden={!authenticated}>
+						<Link to="/profile">User Profile</Link>
+					</li>
 					<li hidden={authenticated}>
 						<Link to="/register">Register</Link>
 					</li>
