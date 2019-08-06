@@ -1,5 +1,5 @@
 import { Db } from 'orientjs';
-import { getVertexByProperty, createVertex } from '../helpers/db-helpers';
+import { getVertexByProperty, createVertex, updateVertex } from '../helpers/db-helpers';
 import bcrypt from 'bcrypt';
 import { IVertexDocument, Vertex } from './Vertex';
 /**
@@ -20,7 +20,6 @@ export class Person extends Vertex implements IPersonDocument {
 	first_name: string;
 	last_name: string;
 	password: string;
-	exists: boolean = false;
 	/**
 	 * Create a new instance of the Person class
 	 * @param db {Db}
@@ -42,7 +41,7 @@ export class Person extends Vertex implements IPersonDocument {
 	 * @param id {string}
 	 * @return {Promise<Person>}
 	 */
-	findPersonById(id: string): Promise<Person> {
+	findPersonById(id: string): Promise<IPersonDocument> {
 		if (id) {
 			return this._findPerson('id', id);
 		}
@@ -53,9 +52,9 @@ export class Person extends Vertex implements IPersonDocument {
 	 * @param id {string}
 	 * @return {Promise<Person>}
 	 */
-	findPersonByEmail(email: string): Promise<Person> {
+	findPersonByEmail(email: string): Promise<IPersonDocument> {
 		if (email) {
-			return this._findPerson('email', email);
+			return this._findPerson('email', email.toLowerCase());
 		}
 		throw new Error('You must provide an email address');
 	}
@@ -65,18 +64,13 @@ export class Person extends Vertex implements IPersonDocument {
 	 * @param propertyValue {string|number}
 	 * @return {Promise<Person>}
 	 */
-	private _findPerson(propertyName: string, propertyValue: string|number): Promise<Person> {
+	private _findPerson(propertyName: string, propertyValue: string|number): Promise<IPersonDocument> {
 		if (propertyName && propertyValue) {
-			return getVertexByProperty('Person', propertyName, propertyValue, this.db).then((personObj: IPersonDocument) => {
-				if (personObj) {
-					this.exists = true;
-					this._initObject(personObj);
-					return this;
-				}else {
-					this.exists = false;
-				}
+			return getVertexByProperty('Person', propertyName, propertyValue, this.db).then((resp: any) => {
+				return resp;
 			});
 		}
+		throw new Error(`Missing argument(s) propertyName = ${propertyName}, propertyValue = ${propertyValue}`);
 	}
 	/**
 	 * Populate the properties of this class with the properties from orientDb
@@ -84,7 +78,6 @@ export class Person extends Vertex implements IPersonDocument {
 	 */
 	private _initObject(apiObj: IPersonDocument): Person {
 		if (apiObj) {
-			this.exists = apiObj.id ? true : false;
 			Object.assign(this, apiObj);
 		}
 		return this;
@@ -101,22 +94,14 @@ export class Person extends Vertex implements IPersonDocument {
 		throw new Error('You must provide a typedPassword to compare with');
 	}
 	/**
-	 * Get an object representing this class instance
-	 * @return {IPersonDocument}
-	 */
-	toObject(): IPersonDocument {
-		const obj = {...this};
-		delete obj.db;
-		delete obj.exists;
-		return obj;
-	}
-	/**
 	 * Save this model to the db
 	 * @return {Promise<Person>}
 	 */
 	save(): Promise<Person> {
 		if (this.id) {
-
+			return updateVertex(this['@rid'], this.toObject(), this.db).then((updateCount: number) => {
+				return this;
+			});
 		}else {
 			return createVertex('Person', this.toObject(), this.db).then((personResp: IPersonDocument) => {
 				this._initObject(personResp);

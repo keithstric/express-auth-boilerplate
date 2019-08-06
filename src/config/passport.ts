@@ -6,7 +6,7 @@ import passport from 'passport';
 import passportLocal from 'passport-local';
 import { Application } from 'express';
 import { Db } from 'orientjs';
-import { Person } from '../models/Person';
+import { Person, IPersonDocument } from '../models/Person';
 import { logger } from './logger';
 
 const initPassport = (app: Application, db: Db) => {
@@ -30,7 +30,8 @@ const initPassport = (app: Application, db: Db) => {
 	 */
 	passport.use(new passportLocal.Strategy({usernameField: 'email'}, (email: string, password: string, done: any) => {
 		const user = new Person(db);
-		user.findPersonByEmail(email).then((person: Person) => {
+		user.findPersonByEmail(email).then((personDoc: IPersonDocument) => {
+			const person = personDoc ? new Person(db, personDoc) : undefined;
 			if (person) {
 				if (person.comparePassword(password)) {
 					done(null, person);
@@ -38,7 +39,10 @@ const initPassport = (app: Application, db: Db) => {
 					done(null, false, {message: 'Incorrect Password'});
 				}
 			}else {
-				done(null, false, {message: `Email Address "${email}" not found`});
+				done(null, false, {
+					message: `Email Address "${email}" not found`,
+					code: '02'
+				});
 			}
 		}).catch((err: Error) => {
 			logger.error(`Error occurred in passport middleware: ${err.message}`);

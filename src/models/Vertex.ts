@@ -42,8 +42,13 @@ export class Vertex implements IVertexDocument {
 	 * @return {IPersonDocument}
 	 */
 	toObject(): IVertexDocument {
-		const obj = {...this};
-		delete obj.db;
+		const obj: any = {...this};
+		const removeKeys = ['db']
+		Object.keys(obj).forEach((key: string) => {
+			if (removeKeys.indexOf(key) > -1) {
+				delete obj[key];
+			}
+		});
 		return obj;
 	}
 	/**

@@ -110,7 +110,16 @@ export const createEdge = (label: string, fromRid: string, toRid: string, db: Db
  * @returns {Promise<any>}
  */
 export const updateVertex = (rid: string, payload: any, db: Db): Promise<any> => {
+	// console.log('db-helpers.updateVertex, rid=', rid);
+	// console.log('db-helpers.updateVertex, provided payload=', payload);
 	if (rid && payload && Object.keys(payload).length > 0 && db) {
+		const protectedFields = ['id', 'created_date', 'db'];
+		Object.keys(payload).forEach((key: string) => {
+			if (key.startsWith('@') || key.startsWith('#') || protectedFields.indexOf(key) > -1) {
+				delete payload[key];
+			}
+		});
+		// console.log('db-helpers.updateVertex, send payload=', payload);
 		return db.update(rid).set(payload).one();
 	}
 	throw new Error('Missing Parameters');

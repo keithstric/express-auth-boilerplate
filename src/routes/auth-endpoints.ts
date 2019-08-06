@@ -105,17 +105,21 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 		const person = new Person(db, {
 			first_name,
 			last_name,
-			email,
+			email: email ? email.toLowerCase() : email,
 			password: hashedPassword
 		});
 		if (password !== verify_password) {
 			res.send({message: 'Passwords don\'t match'});
 		}else {
-			person.findPersonByEmail(email.toLowerCase()).then((existingPerson: Person) => {
+			person.findPersonByEmail(email.toLowerCase()).then((personDoc: IPersonDocument) => {
+				const existingPerson = personDoc ? new Person(db, personDoc) : undefined;
 				if (!existingPerson) {
 					return person.save();
 				}else{
-					res.send({message: `User with email address ${existingPerson.email} alread exists!`})
+					res.send({
+						message: `User with email address ${existingPerson.email} already exists!`,
+						code: '01'
+					});
 				}
 			}).then((savedPerson: Person) => {
 				if (savedPerson) {

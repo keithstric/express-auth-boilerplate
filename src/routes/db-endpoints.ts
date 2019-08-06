@@ -2,11 +2,12 @@
  * This file contains routes pertinent to querying the DB
  * @exports initDbEndpoints
  */
-import { Application, Request, Response } from 'express';
+import { Application, Request, Response, NextFunction } from 'express';
 import { Db } from 'orientjs';
 import { logger } from '../config/logger';
 import authReqMiddleware from '../config/restrict-path';
-import { getVerticesByType, getVertexByProperty, getVerticesByQuery } from '../helpers/db-helpers';
+import { getVerticesByType, getVertexByProperty, getVerticesByQuery, createPassword } from '../helpers/db-helpers';
+import { Person, IPersonDocument } from '../models/Person';
 
 const initDbEndpoints = (app: Application, db: Db) => {
 	/**
@@ -106,6 +107,76 @@ const initDbEndpoints = (app: Application, db: Db) => {
 			logger.error(`Error occurred at GET route /vertex/:vertexId: ${err.message}`);
 			res.status(500).send(err);
 		});
+	});
+	/**
+	 * @swagger
+	 * /api/vertex/{vertexId}:
+	 *   put:
+	 *     tags:
+	 *       - Db
+	 *     description: Update a single Vertex's values
+	 *     responses:
+	 *       200:
+	 *         $ref: '#/components/responses/Vertex'
+	 *       401:
+	 *         $ref: '#/components/responses/Message'
+	 *       500:
+	 *         $ref: '#/components/responses/Error'
+	 *     requestBody:
+	 *       required: true
+	 *       content:
+	 *         application/x-www-form-urlencoded:
+	 *           schema:
+	 *             type: object
+	 *             additionalProperties: true
+	 *     parameters:
+	 *       - name: vertexId
+	 *         description: the id of the vertex
+	 *         in: path
+	 *         required: true
+	 *         schema:
+	 *           type: string
+	 */
+	app.put('/api/vertex/:vertexId', authReqMiddleware, (req: Request, res: Response) => {
+		const {vertexId} = req.params;
+		if (vertexId) {
+			if (req.body['@class'] === 'Person') {
+				const newPayload = Object.assign({}, req.body);
+				const {new_password, verify_password, email} = newPayload;
+				delete newPayload.password;
+				if (new_password && verify_password) {
+					if (new_password !== verify_password) {
+						res.send({message: 'Passwords don\'t match'});
+						return;
+					}else{
+						const hashedPassword = createPassword(new_password);
+						newPayload.password = hashedPassword;
+					}
+					delete newPayload.new_password;
+					delete newPayload.verify_password;
+				}
+				const person: Person = new Person(db, newPayload);
+				person.findPersonByEmail(email).then((existingPerson: IPersonDocument) => {
+					if (existingPerson && existingPerson.id !== person.id) {
+						res.send({
+							message: `User with email address ${existingPerson.email} already exists!`,
+							code: '01'
+						});
+						return;
+					}else {
+						person.save().then((updatedPerson: Person) => {
+							res.send(updatedPerson.toJson());
+							logger.info(`User with rid ${person['@rid']} updated their profile}`);
+						}).catch((err: Error) => {
+							logger.error(`Person update failed. ${err.message}`);
+							res.status(500).send({message: err.message});
+						});
+					}
+				});
+			}else {
+				res.send({message: 'Unknown Class provided in the body of a request'});
+			}
+		}
 	});
 }
 
