@@ -66,7 +66,7 @@ const initDbEndpoints = (app: Application, db: Db) => {
 			getVerticesByType(req.params.vertexType, db).then((resp: any[]) => {
 				res.send(resp);
 			}).catch((err: Error) => {
-				logger.error(`Error occurred at GET route /vertices/:vertexType: ${err.message}`);
+				logger.error(`Error occurred at GET route /api/vertices/${req.params.vertexType}: ${err.message}`);
 				res.status(500).send(err);
 			});
 		}else {
