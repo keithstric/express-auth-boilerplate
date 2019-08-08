@@ -152,19 +152,20 @@ Documentation for the client is in `client/README.md`. The client server runs on
 
 There is a lot here that isn't needed if this is to be strictly used to authenticate with Domino LDAP. Below is a list of things that will need to be changed to fit that role.
 
->NOTE: It may be prudent to just create a new starter kit _just_ for domino authentication.
+>NOTE: It may be prudent to create a new starter kit _just_ for domino authentication.
 
 ### docker-compose.yml
 
 * Remove the orientdb and redis services
 * Add the `client` directory as a volume, this is optional but will allow usage of the React app for login/logout
-* The LDAP properties in `.env.default` will need to be added to `.env`
+* Add the `LDAP` properties to `environment`
+* Remove the `REDIS` and `DB` properties from `environment`
 
 ### .env
 
 * Remove all `DB_` references
 * Remove all `REDIS_` references
-* Add the `LDAP_` references
+* Add all `LDAP_` references
 
 ### Files and Directories
 
@@ -195,7 +196,7 @@ You will need to modify the SwaggerDoc configuration in `./src/config/swaggerDoc
 
 #### parameters
 
-You can just remove this whole section
+* Remove `options.definition.components.parameters`
 
 #### tags
 
