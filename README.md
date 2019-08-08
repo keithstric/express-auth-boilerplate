@@ -70,6 +70,12 @@ After cloning this repository you will find a `.env.default` file. Copy this fil
 * WEB_SESS_NAME - The name of web user sessions (i.e. Cookie name)
 * WEB_SESS_SECRET - Random string for hashing the value for the user session
 * WEB_SESS_DURATION - Number of MilliSeconds a session should remain active
+* LDAP_SERVER - The LDAP server host name
+* LDAP_SERVER_PORT - The port the LDAP server listens on (default: 389)
+* LDAP_SEARCH_BASE - The LDAP Search Base
+* LDAP_SEARCH_FILTER - The LDAP Search filter
+* LDAP_USERNAME_FIELD - The name of the _username_ field
+* LDAP_PASSWORD_FIELD - The name of the _password_ field
 
 ## package.json Scripts
 
