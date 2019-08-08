@@ -1,5 +1,6 @@
 /**
- * This file provides a few database helpers for getting vertices, creating vertices and edges, etc.
+ * This file provides a few database helpers for getting vertices, creating vertices and edges, etc. This file is not needed if this project
+ * is being used JUST for Domino Authentication
  */
 import { Db } from 'orientjs';
 import bcrypt from 'bcrypt';

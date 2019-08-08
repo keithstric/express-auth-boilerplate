@@ -1,3 +1,8 @@
+/**
+ * The model for a person from the orientdb instance. This file is not needed if this project
+ * is being used JUST for Domino Authentication
+ */
+
 import { Db } from 'orientjs';
 import { getVertexByProperty, createVertex, updateVertex } from '../helpers/db-helpers';
 import bcrypt from 'bcrypt';

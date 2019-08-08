@@ -1,5 +1,6 @@
 /**
- * This file contains routes pertinent to querying the DB
+ * This file contains routes pertinent to querying the DB. This file is not needed if this project
+ * is being used JUST for Domino Authentication
  * @exports initDbEndpoints
  */
 import { Application, Request, Response, NextFunction } from 'express';

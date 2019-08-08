@@ -140,7 +140,7 @@ To stop the Docker environment run:
 
 `npm run stop:docker`
 
-# The React client
+## The React client
 
 Documentation for the client is in `client/README.md`. The client server runs on `http://localhost:3000`. Pertinent requests are proxied to the express server (`http://localhost:3001`). To start the client:
 
@@ -148,12 +148,71 @@ Documentation for the client is in `client/README.md`. The client server runs on
 * `cd client/`
 * run `npm start` - this will compile the client code and open a browser tab
 
+## Considerations when using this for Domino
+
+There is a lot here that isn't needed if this is to be strictly used to authenticate with Domino LDAP. Below is a list of things that will need to be changed to fit that role.
+
+>NOTE: It may be prudent to just create a new starter kit _just_ for domino authentication.
+
+### docker-compose.yml
+
+* Remove the orientdb and redis services
+* Add the `client` directory as a volume, this is optional but will allow usage of the React app for login/logout
+* The LDAP properties in `.env.default` will need to be added to `.env`
+
+### .env
+
+* Remove all `DB_` references
+* Remove all `REDIS_` references
+* Add the `LDAP_` references
+
+### Files and Directories
+
+You can effectively remove the following files as they will no longer be needed. Once you do this you will need to correct all the files that import these files and make calls to their exported functions. _(* indicates optional)_
+
+* `./src/helpers/`
+* `./src/models/`
+* `./src/routes/db-endpoints.ts`
+* `./src/config/orient-db.ts`
+* *Remove or Modify - `./client/src/components/personForm.tsx`
+* *`./client/src/pages/Home.tsx`
+* *`./client/src/pages/Profile.tsx`
+* *`./client/src/pages/Register.tsx`
+
+### SwaggerDoc Configuration
+
+You will need to modify the SwaggerDoc configuration in `./src/config/swaggerDoc.ts`. You can modify or remove the following items:
+
+#### schemas
+
+* Remove `options.definition.components.schemas.Vertex`
+* Modify `options.definition.components.schemas.Person` to match what you will get from the LDAP server
+
+#### responses
+
+* Remove `options.definition.components.responses.Vertex`
+* Remove `options.definition.components.responses.VertexArray`
+
+#### parameters
+
+You can just remove this whole section
+
+#### tags
+
+* Remove `options.definition.components.tags.Db`
+
+#### apis
+
+* Remove array member `./dist/routes/db-endpoints.js` from `options.apis`
+
 ## Node Projects of Interest
 
 * [node.js](https://nodejs.org) - Node.js
 * [express](https://expressjs.com) - The Web API
 * [orientjs](https://www.npmjs.com/package/orientjs) - OrientDB JavaScript Driver
 * [passport](https://passportjs.org) - Web Authentication
+* [passport-local](http://www.passportjs.org/packages/passport-local/) - Passport.js Local Strategy
+* [passport-ldapauth](http://www.passportjs.org/packages/passport-ldapauth/) - Passport.js LDAP Strategy (For Domino Only, not included in project)
 * [winston](https://www.npmjs.com/package/winston) - A Logger
 * [swagger](https://swagger.io) - API Documentation
 * [typescript](https://www.typescriptlang.org)

@@ -1,5 +1,6 @@
 /**
- * This file sets up the database connection and returns it
+ * This file sets up the database connection and returns it. This file is not needed if this project
+ * is being used JUST for Domino Authentication
  */
 import OrientDBClient, { ServerConfig } from 'orientjs';
 

@@ -1,3 +1,7 @@
+/**
+ * The model for a Vertex from the orientdb instance. This file is not needed if this project
+ * is being used JUST for Domino Authentication
+ */
 import { Db } from 'orientjs';
 /**
  * Interface for a vertex. This represents the structure received from OrientDb for any type of Vertex

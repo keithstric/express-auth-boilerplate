@@ -52,7 +52,7 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
  * Setup passport middleware, routes and swagger
  */
 initPassport(app, db);
-initSystemEndpoints(app, logger); // Must be initialized first as swagger definitions, tags, components, etc are defined here
+initSystemEndpoints(app, logger);
 initAuthEndpoints(app, db);
 initDbEndpoints(app, db);
 swaggerDocs(app); // Must be initialized last to account for all routes
