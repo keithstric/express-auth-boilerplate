@@ -29,7 +29,7 @@ function Header(props: any) {
 						<Link to="/login">Login</Link>
 					</li>
 					<li hidden={!authenticated}>
-						<Link to="/logout">Logout</Link>
+						<a href="/logout">Logout</a>
 					</li>
 				</ul>
 			</div>
