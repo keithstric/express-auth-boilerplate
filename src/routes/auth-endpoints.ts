@@ -2,7 +2,8 @@
  * This file sets up all the user authentication/registration/logout routes
  * @exports initClientEndpoints
  */
-import { Application, Request, Response, NextFunction } from 'express';
+import * as path from 'path';
+ import express, { Application, Request, Response, NextFunction } from 'express';
 import { Db } from 'orientjs';
 import passport from 'passport';
 import { createPassword } from '../helpers/db-helpers';
@@ -11,6 +12,24 @@ import { logger } from '../config/logger';
 import authReqMiddleware from '../config/restrict-path';
 
 const initAuthEndpoints = (app: Application, db: Db) => {
+	// Required for React to locate required files
+	app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')));
+	/**
+	 * @swagger
+	 * /login:
+	 *   get:
+	 *     tags:
+	 *       - authentication
+	 *     description: The React client login page
+	 *     responses:
+	 *       200:
+	 *         description: OK
+	 *         schema:
+	 *           type: string
+	 */
+	app.get('/login', (req: Request, res: Response) => {
+		res.sendFile(path.join(__dirname, '..', '..', 'client', 'build', 'index.html'));
+	});
 	/**
 	 * @swagger
 	 * /login:
@@ -164,7 +183,7 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 			}
 			res.clearCookie(process.env.WEB_SESS_NAME);
 			logger.info(`Logged Out: ${first_name} ${last_name}: <${email}>`);
-			res.send({message: 'success'});
+			res.redirect('/login');
 		});
 	});
 }

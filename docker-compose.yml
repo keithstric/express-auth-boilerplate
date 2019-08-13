@@ -30,6 +30,7 @@ services:
     volumes:
       - ./dist:/usr/express-auth-boilerplate/dist
       - ./src:/usr/express-auth-boilerplate/src
+      - ./client:/usr/express-auth-boilerplate/client
     environment:
       NODE_ENV: ${NODE_ENV}
       DB_HOST: ${DB_HOST}

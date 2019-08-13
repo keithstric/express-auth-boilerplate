@@ -173,10 +173,6 @@ There is a lot here that isn't needed if this is to be strictly used to authenti
 * Remove all `REDIS_` references
 * Add all `LDAP_` references
 
-### ./src/routes/auth-endpoints.ts
-
-This file will need to be modified to possibly include the express.static middleware and a GET route for `/login`
-
 ### Files and Directories
 
 You can effectively remove the following files as they will no longer be needed. Once you do this you will need to correct all the files that import these files and make calls to their exported functions. _(* indicates optional)_
