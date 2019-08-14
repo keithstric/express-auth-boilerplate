@@ -243,9 +243,13 @@ const options = {
 	]
 };
 
+const swaggerOptions = {
+	customCssUrl: '/theme-material.css'
+}
+
 const swaggerSpec = swaggerJsdoc(options);
 const swaggerDocs = (app: Application) => {
-	app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+	app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerOptions));
 	app.get('/api-docs.json', (req: Request, res: Response) => {
 		res.send(swaggerSpec);
 	});
