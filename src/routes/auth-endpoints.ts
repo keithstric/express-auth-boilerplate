@@ -40,6 +40,8 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *     responses:
 	 *       200:
 	 *         $ref: '#/components/responses/Person'
+	 *       401:
+	 *         $ref: '#/components/responses/Message'
 	 *     requestBody:
 	 *       required: true
 	 *       content:
@@ -70,7 +72,7 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 					return res.send(user);
 				});
 			}else{
-				return res.send(info);
+				return res.status(401).send(info);
 			}
 		})(req, res, next);
 	});

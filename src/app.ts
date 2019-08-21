@@ -1,14 +1,12 @@
 import express, { Request, Response, Application } from 'express';
 import session from 'express-session';
 import flash from 'express-flash';
-import initAuthEndpoints from './routes/auth-endpoints';
-import initSystemEndpoints from './routes/system-endpoints';
 import swaggerDocs from './config/swaggerDoc';
 import getDbConn from './config/orient-db';
 import connectRedis, {RedisStoreOptions} from 'connect-redis';
 import initPassport from './config/passport';
 import {logger} from './config/logger';
-import initDbEndpoints from './routes/db-endpoints';
+import initEndpoints from './routes/index';
 
 /**
  * Setup the application
@@ -41,7 +39,9 @@ app.use(session({
 	resave: false,
 	saveUninitialized: false
 }));
-
+/**
+ * express middleware to handle unhandled errors
+ */
 app.use((err: Error, req: Request, res: Response, next: any) => {
 	res.locals.message = err.message;
 	res.locals.error = process.env.NODE_ENV === 'development' ? err : {};
@@ -52,10 +52,14 @@ app.use((err: Error, req: Request, res: Response, next: any) => {
  * Setup passport middleware, routes and swagger
  */
 initPassport(app, db);
-initSystemEndpoints(app, logger);
-initAuthEndpoints(app, db);
-initDbEndpoints(app, db);
-swaggerDocs(app); // Must be initialized last to account for all routes
+/**
+ * Initialize all the endpoints
+ */
+initEndpoints(app, db, logger);
+/**
+ * initialize Swagger. Must be initialized last to account for all routes
+ */
+swaggerDocs(app);
 /**
  * Start the listener
  */

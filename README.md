@@ -1,6 +1,6 @@
 # express-auth-boilerplate
 
-This is a boilerplate project to setup express, passport and orientdb. API Routes provided are for authorization and registration. If you want to use some other database, just replace the orientdb Docker configuration with your preferred DB.
+This is a boilerplate project to setup express, passport and orientdb. API Routes provided are for authorization, registration and basic DB Querying. If you want to use some other database, just replace the orientdb Docker configuration with your preferred DB.
 
 ## Services Provided
 
@@ -17,30 +17,44 @@ The following services are provided by this project:
 
 ## Directory structure
 
-The following explains the directory structure of this project
+The following is the directory structure of this project. `dist` directories are not included in this list as they are produced programmatically.
 
-* `client` - This is the directory where you will place your client application. This currently has a React project initialized
-* `orientdb` - This directory contains files required for the OrientDB Docker container
-	* `backup` - Backups
-	* `databases` - Contains the Database Schema and data
-* `redisData` - Redis data for the Redis Docker Container
-* `src` - Contains the source code for the express application
-	* `config` - Directory for server configuration files (i.e. DB, Passport, etc.)
-		* `swaggerDoc.ts` - Swagger middleware configuration, shared components and tags
-	* `controllers` - Directory for controller files
-	* `helpers` - Directory for common helper type files
-	* `models` - Directory for Data Model storage
-	* `routes` - Directory for express routing files
-	* `app.ts` - The application entry point
-	* `swaggerDocs.ts` - Swagger configuration
-* `.dockerignore` - Files/Directories to ignore while copying data to a docker container
-* `.env` - Environment variables for the express application - *NOT STORED IN REPOSITORY*
-* `.env.default` - Default `.env` structure *DO NOT DELETE*
-* `.gitignore` - Files/Directories to ignore when committing to the repository
-* `docker-compose.yml` - Docker container configuration
-* `Dockerfile` - Docker environment configuration
-* `package.json` - Node.js configuration
-* `tsconfig.json` - Typescript Configuration
+```
+.
+├── client - Contains the client application. This currently has a React project initialized
+├── src - Contains the source code for the express application
+│   ├── config - Directory for server configuration files (i.e. DB, Passport, etc.)
+│   │   ├── logger.ts - Logger configuration
+│   │   ├── orient-db.ts - Setup the OrientDb connection and middleware
+│   │   ├── passport.ts - Passport middleware configuration
+│   │   ├── restrict-path.ts - Route Authorization middleware
+│   │   └── swaggerDoc.ts - Swagger middleware configuration, shared components and tags
+│   ├── helpers - Directory for common helper type files
+│   │   └── db-helpers.ts - Various DB helper functions
+│   ├── models - Directory for Data Model storage
+│   │   ├── Person.ts - The Person model
+│   │   └── Vertex.ts - The Vertex model
+│   ├── orientdb - This directory contains files required for the OrientDB Docker container
+│   │   ├── backup - Backups
+│   │   └── databases - Contains the database schema and data
+│   ├── redisData - Redis data for the Redis Docker Container
+│   └── routes
+│   │   ├── auth-endpoints.ts - Authentication routes
+│   │   ├── db-endpoints.ts - DB Endpoints
+│   │   ├── index.ts - Initialize all Endpoints
+│   │   └── system-endpoints.ts - System Routes (Currently only a `logs` route to fetch the logs)
+│   ├── app.ts - The application entry point
+│   └── express-auth-types.d.ts - Typescript definitions for this project
+├── .dockerignore - Files/Directories to ignore while copying data to a docker container
+├── .env - Environment variables for the express application - *NOT STORED IN REPOSITORY*
+├── .env.default - Default `.env` structure *DO NOT DELETE*
+├── .gitignore - Files/Directories to ignore when committing to the repository
+├── Dockerfile - Docker environment configuration
+├── README.md - This readme file
+├── docker-compose.yml - Docker container configuration
+├── package.json - Node.js configuration
+└── tsconfig.json - Typescript Configuration
+```
 
 ## Dependencies
 
@@ -50,10 +64,43 @@ To run this application there are some dependencies you will need to have instal
 * [docker](https://docker.com) - Securely build, share and run any application, anywhere.
 * [typescript](https://www.npmjs.com/package/typescript) - _Optional_ install globally
 
-## Environment Variables
+## package.json Scripts
 
-After cloning this repository you will find a `.env.default` file. Copy this file to `.env` and provide values for the properties. *DO NOT* commit your `.env` file to the repository. This file contains sensitive information that we do not want made available to the public.
+* postinstall - Runs the build script once `npm install` is done
+* build - Compiles all TypeScript to JavaScript and places in the `./dist` directory
+* start:docker - Starts the docker containers
+* build:start:docker - Builds the docker containers and then starts them
+* start - Starts the node application (Used inside Docker container)
+* watch - Starts `tsc-watch`. Will reload the node application when changes are made in the `./src` directory (Used inside Docker container)
+* stop:docker - Stops all docker containers
 
+## Getting started - Development
+
+Below are the steps required to get started developing your application.
+
+### Initial Process
+
+* Ensure dependencies are installed (node.js and Docker)
+* Clone this repository to your local machine
+* Create your `.env` file with appropriate values (See the Environment Variables section)
+* run `npm install`
+* run `npm run build`
+* run `npm run build:start:docker`
+
+This will create 3 docker containers:
+
+* redis - Redis server for user session storage and pub/sub
+	* Exposes port `REDIS_PORT` to Docker and the Local environment
+* orientdb - Orient DB instance with a Person vertex
+	* Exposes port `DB_STUDIO_PORT` (OrientDb Studio) and `DB_PORT` to Docker and the Local environment
+* express-auth-boilerplate - This project
+	* Exposes port defined in the `WEB_LOCAL_PORT` environment variable to the local environment and `WEB_PORT` to Docker
+
+### Environment Variables
+
+After cloning this repository you will find the `.env.default` file. Copy this file to `.env` and provide values for the properties. *DO NOT* commit your `.env` file to the repository. This file contains sensitive information that we do not want made available to the public.
+
+* NODE_ENV - The node environment to use. Valid values are "development" and "production"
 * DB_HOST - host name for the orientDB container
 * DB_USER - User name for using the database
 * DB_PASSWORD - Password for the _DB_USER_
@@ -77,40 +124,24 @@ After cloning this repository you will find a `.env.default` file. Copy this fil
 * LDAP_USERNAME_FIELD - The name of the _username_ field
 * LDAP_PASSWORD_FIELD - The name of the _password_ field
 
-## package.json Scripts
-
-* postinstall - Runs the build script once `npm install` is done
-* build - Compiles all TypeScript to JavaScript and places in the `./dist` directory
-* start:docker - Starts the docker containers
-* build:start:docker - Builds the docker containers and then starts them
-* start - Starts the node application (Used inside Docker container)
-* watch - Starts `tsc-watch`. Will reload the node application when changes are made in the `./src` directory (Used inside Docker container)
-* stop:docker - Stops all docker containers
-
-## Getting started - Development
-
-Below are the steps required to get started developing your application.
-
-### Initial Process
-
-* Clone this repository to your local machine
-* Ensure dependencies are installed (node.js and Docker)
-* run `npm install`
-* run `npm run build`
-* run `npm run build:start:docker`
-
-This will create 3 docker containers:
-
-* redis - Redis server for user session storage and pub/sub
-	* Exposes port `REDIS_PORT` to Docker and the Local environment
-* orientdb - Orient DB instance with a Person vertex
-	* Exposes port `DB_STUDIO_PORT` (OrientDb Studio) and `DB_PORT` to Docker and the Local environment
-* express-auth-boilerplate - This project
-	* Exposes port defined in the `WEB_LOCAL_PORT` environment variable to the local environment and `WEB_PORT` to Docker
-
 ### After the "Initial Process"
 
-After the initial process has been executed and you have 3 docker containers running. Ensure you can access those containers via a browser or Curl command. As you make changes to your application and save your changes, you should see the express-auth-boilerplate container restart the node application with your changes available after the restart.
+After the initial process has been executed and you have 3 docker containers running. Ensure you can access those containers via a browser or Curl command. As you make changes to your application and save your changes, you should see the express-auth-boilerplate container restart the node application. Your changes will be available after the restart.
+
+### Express Routes
+
+The following routes are available within this project.
+
+* `/login` - GET - The React Login page
+* `/login` - POST - Route to POST the login form to
+* `/logout` - GET - Route to logout
+* `/register` - POST - Register a new user
+* `/api-docs` - GET - Route for the Swagger Documentation
+* `/api-docs.json` - GET - Get the `swagger.json` file
+* `/api/logs` - GET - Get the most recent log entries or query the log
+* `/api/vertices` - GET - Query the DB for vertices
+* `/api/vertices/:vertexType` - GET - Get a list of vertices by class name
+* `/api/vertex/:vertexId` - GET - Get a vertex by it's id
 
 ## Docker
 
@@ -121,6 +152,27 @@ This project utilizes [Docker](https://docker.com) to provide the node.js, orien
 * [redis](https://hub.docker.com/_/redis) - Redis is an open source key-value store that functions as a data structure server.
 * [orientdb](https://hub.docker.com/_/orientdb) - OrientDB a Multi-Model Open Source NoSQL DBMS that combines graphs and documents.
 * [node](https://hub.docker.com/_/node) - Node.js is a JavaScript-based platform for server-side and networking applications.
+
+### Docker Volumes
+
+The following directories are defined as volumes inside Docker. This ensures any changes made within the local directories on the Docker host are updated in the Docker container.
+
+* `./client/` --> `/usr/express-auth-boilerplate/client/`
+* `./dist/` --> `/usr/express-auth-boilerplate/dist/`
+* `./src/` --> `/usr/express-auth-boilerplate/src/`
+* `./orientdb/backup` --> `/orientdb/backup/`
+* `./orientdb/databases` --> `/orientdb/databases/`
+* `./redisData/` --> `/data/`
+
+### Docker Port Mapping
+
+The following ports are exposed to the local machine. All of these ports are defined as environment variables. Format below is _Local Machine Port Number_ --> _Docker Port Number_
+
+* `${DB_STUDIO_PORT}` --> `${DB_STUDIO_PORT}` - Port number for the orientdb studio, default is 2480
+* `${DB_PORT}` --> `${DB_PORT}` - Port number for orientdb, default is 2424
+* `${REDIS_PORT}` --> `${REDIS_PORT}` - Port number for redis, default is 6379
+* `${WEB_LOCAL_PORT}` --> `${WEB_PORT}` - Port number for HTTP, default local port is 3001, default docker port is 80
+* `${WEB_DEBUG_PORT}` --> `${WEB_DEBUG_PORT}` - Port number for remote debugger, default is 5858
 
 ### Manually Building the Docker Environment
 
@@ -148,11 +200,17 @@ To stop the Docker environment run:
 
 ## The React client
 
-Documentation for the client is in `client/README.md`. The client server runs on `http://localhost:3000`. Pertinent requests are proxied to the express server (`http://localhost:3001`). To start the client:
+Documentation for the client is in `client/README.md`. The client dev server runs on `http://localhost:3000`. Pertinent requests are proxied to the express server (`http://localhost:3001`). To start the client:
 
 * Open a terminal
 * `cd client/`
 * run `npm start` - this will compile the client code and open a browser tab
+
+If you wish to surface the client app in your docker container and will not be changing the client app:
+
+* Open a terminal
+* `cd ./client/`
+* run `npm run build` - This will compile the client code and place it in `./client/build/` which will then be available within the docker container.
 
 ## Considerations for Domino Authentication
 
@@ -222,5 +280,7 @@ You will need to modify the SwaggerDoc configuration in `./src/config/swaggerDoc
 * [passport-ldapauth](http://www.passportjs.org/packages/passport-ldapauth/) - Passport.js LDAP Strategy (For Domino Only, not included in project)
 * [winston](https://www.npmjs.com/package/winston) - A Logger
 * [swagger](https://swagger.io) - API Documentation
-* [typescript](https://www.typescriptlang.org)
-* [react](https://reactjs.org)
+* [swagger-ui-express](https://github.com/scottie1984/swagger-ui-express) - The swagger UI for express
+* [swagger-jsdoc](https://github.com/Surnet/swagger-jsdoc) - Module which provides the ability to define swagger documentation in [JSDoc](https://devdocs.io/jsdoc/) format
+* [typescript](https://www.typescriptlang.org) - A superset of JavaScript
+* [react](https://reactjs.org) - The React Project
