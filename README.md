@@ -142,6 +142,7 @@ The following routes are available within this project.
 * `/api/vertices` - GET - Query the DB for vertices
 * `/api/vertices/:vertexType` - GET - Get a list of vertices by class name
 * `/api/vertex/:vertexId` - GET - Get a vertex by it's id
+* `/api/vertex/:vertexId` - PUT - Update a vertex
 
 ## Docker
 
