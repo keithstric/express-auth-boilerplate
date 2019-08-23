@@ -149,7 +149,7 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 						if (err) {
 							throw err;
 						}
-						res.send(savedPerson);
+						res.send(savedPerson.toObject());
 						logger.info(`Registered User: ${name} with id ${savedPerson.id}`);
 					});
 				}else {
