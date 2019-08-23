@@ -20,7 +20,9 @@ export const getVertexByProperty = (vertexClassName: string, propertyName: strin
 		whereObj[propertyName] = value;
 		return db.select().from(vertexClassName).where(whereObj).one();
 	}
-	throw new Error('Missing Parameters');
+	const argsObj = {vertexClassName: vertexClassName, propertyName: propertyName, value: value, db: db};
+	const msg = _getMissingParamsMsg(argsObj);
+	throw new Error(msg);
 };
 /**
  * Get an array of vertex types
@@ -32,7 +34,9 @@ export const getVerticesByType = (vertexClassName: string, db: Db) => {
 	if (vertexClassName && db) {
 		return db.select().from(vertexClassName).all();
 	}
-	throw new Error('Missing Parameters');
+	const argsObj = {vertexClassName: vertexClassName, db: db};
+	const msg = _getMissingParamsMsg(argsObj);
+	throw new Error(msg);
 }
 /**
  * Perform a query against the DB
@@ -57,7 +61,9 @@ export const getVerticesByQuery = (vertexClassName: string, queryObj: IDbQuery, 
 		console.log('getVerticesByQuery, query=', query);
 		return db.query(query).all();
 	}
-	throw new Error('Missing Parameters');
+	const argsObj = {vertexClassName: vertexClassName, queryObj: queryObj, db: db};
+	const msg = _getMissingParamsMsg(argsObj);
+	throw new Error(msg);
 }
 /**
  * Create a hashed password from the passed in password using bcrypt
@@ -69,7 +75,7 @@ export const createPassword = (typedPassword: string) => {
 		const salt = bcrypt.genSaltSync(13);
 		return bcrypt.hashSync(typedPassword, salt);
 	}
-	throw new Error('Missing Parameters');
+	throw new Error('Missing Parameters, typedPassword');
 }
 /**
  * Create a vertex in orientDb
@@ -82,7 +88,9 @@ export const createVertex = (vertexClass: string, payload: any, db: Db): Promise
 	if (vertexClass && payload && db) {
 		return db.create('VERTEX', vertexClass).set(payload).one();
 	}
-	throw new Error('Missing Parameters');
+	const argsObj = {vertexClass: vertexClass, payload: payload, db: db};
+	const msg = _getMissingParamsMsg(argsObj);
+	throw new Error(msg);
 }
 /**
  * Create an edge between 2 vertices
@@ -101,7 +109,9 @@ export const createEdge = (label: string, fromRid: string, toRid: string, db: Db
 			return db.create('EDGE', label).from(fromRid).to(toRid).set(payload).one();
 		}
 	}
-	throw new Error('Missing Parameters');
+	const argsObj = {label: label, fromRid: fromRid, toRid: toRid, db: db};
+	const msg = _getMissingParamsMsg(argsObj);
+	throw new Error(msg);
 }
 /**
  * Update property values in a vertex
@@ -111,19 +121,27 @@ export const createEdge = (label: string, fromRid: string, toRid: string, db: Db
  * @returns {Promise<any>}
  */
 export const updateVertex = (rid: string, payload: any, db: Db): Promise<any> => {
-	// console.log('db-helpers.updateVertex, rid=', rid);
-	// console.log('db-helpers.updateVertex, provided payload=', payload);
-	if (rid && payload && Object.keys(payload).length > 0 && db) {
+	if (payload && Object.keys(payload).length > 0) {
 		const protectedFields = ['id', 'created_date', 'db'];
 		Object.keys(payload).forEach((key: string) => {
 			if (key.startsWith('@') || key.startsWith('#') || protectedFields.indexOf(key) > -1) {
 				delete payload[key];
 			}
 		});
-		// console.log('db-helpers.updateVertex, send payload=', payload);
-		return db.update(rid).set(payload).one();
 	}
-	throw new Error('Missing Parameters');
+	if (rid && rid.startsWith('#') && payload && Object.keys(payload).length > 0 && db) {
+		console.log('db-helpers.updateVertex, with rid=', rid);
+		return db.update(rid).set(payload).one(); // must use rid
+	}else if (rid && !rid.startsWith('#') && payload && Object.keys(payload).length > 0 && db) {
+		console.log('db-helpers.updateVertex, with id=', rid);
+		const vertexClass = payload['@class'] || 'VBase';
+		return getVertexByProperty(vertexClass, 'id', rid, db).then((resp: any) => {
+			return db.update(resp['@rid']).set(payload).one();
+		});
+	}
+	const argsObj = {rid: rid, payload: payload, db: db};
+	const msg = _getMissingParamsMsg(argsObj);
+	throw new Error(msg);
 }
 /**
  * Get the verex IDs for a label
@@ -146,5 +164,24 @@ export const getVertexEdges = (vertex: any, label: string): string[] => {
 		}
 		return idArr;
 	}
-	throw new Error('Missing Parameters');
+	const argsObj = {vertex: vertex, label: label};
+	const msg = _getMissingParamsMsg(argsObj);
+	throw new Error(msg);
+}
+
+const _getMissingParamsMsg = (paramsObj: any) => {
+	let msg = 'Missing Parameters';
+	if (paramsObj) {
+		const args = Object.keys(paramsObj);
+		const missingArgs: string[] = [];
+		args.forEach((arg: string) => {
+			if (!paramsObj[arg]) {
+				missingArgs.push(arg);
+			}
+		});
+		if (missingArgs.length > 0) {
+			msg += `, ${missingArgs.join(',')}`
+		}
+	}
+	return msg;
 }

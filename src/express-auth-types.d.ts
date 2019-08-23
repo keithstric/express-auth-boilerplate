@@ -9,7 +9,7 @@
  */
 export interface IDbQuery {
 	queryOperator: string;
-	[x: string]: any
+	[x: string]: any;
 }
 /**
  * enum of the winston Log Levels

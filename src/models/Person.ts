@@ -4,17 +4,16 @@
  */
 
 import { Db } from 'orientjs';
-import { getVertexByProperty, createVertex, updateVertex } from '../helpers/db-helpers';
 import bcrypt from 'bcrypt';
 import { IVertexDocument, Vertex } from './Vertex';
 /**
  * Interface for a Person. This should be the structure received from Orient DB for a Person
  */
 export interface IPersonDocument extends IVertexDocument {
-	password: string;
-	last_name: string;
-	first_name: string;
 	email: string;
+	first_name: string;
+	last_name: string;
+	password: string;
 }
 /**
  * The Person class
@@ -32,14 +31,7 @@ export class Person extends Vertex implements IPersonDocument {
 	 * @constructor
 	 */
 	constructor(db: Db, apiObj?: IPersonDocument) {
-		super(db);
-		if (db) {
-			if (apiObj) {
-				this._initObject(apiObj);
-			}
-		}else{
-			throw new Error('You must provide a Db');
-		}
+		super(db, apiObj);
 	}
 	/**
 	 * Find a person by an ID
@@ -70,20 +62,15 @@ export class Person extends Vertex implements IPersonDocument {
 	 * @return {Promise<Person>}
 	 */
 	private _findPerson(propertyName: string, propertyValue: string|number): Promise<IPersonDocument> {
-		if (propertyName && propertyValue) {
-			return getVertexByProperty('Person', propertyName, propertyValue, this.db).then((resp: any) => {
-				return resp;
-			});
-		}
-		throw new Error(`Missing argument(s) propertyName = ${propertyName}, propertyValue = ${propertyValue}`);
+		return super.findVertexByProperty(propertyName, propertyValue, 'Person');
 	}
 	/**
-	 * Populate the properties of this class with the properties from orientDb
-	 * @param apiObj {IPersonDocument}
+	 * Convert a Vertex to a Person
+	 * @param vertex {Vertex}
 	 */
-	private _initObject(apiObj: IPersonDocument): Person {
-		if (apiObj) {
-			Object.assign(this, apiObj);
+	convertFromVertex(vertex: Vertex) {
+		if (vertex) {
+			Object.assign(this, vertex);
 		}
 		return this;
 	}
@@ -102,16 +89,17 @@ export class Person extends Vertex implements IPersonDocument {
 	 * Save this model to the db
 	 * @return {Promise<Person>}
 	 */
-	save(): Promise<Person> {
-		if (this.id) {
-			return updateVertex(this['@rid'], this.toObject(), this.db).then((updateCount: number) => {
-				return this;
+	save(): Promise<Person|Error> {
+		return new Promise((resolve: any, reject: any) => {
+			super.save('Person').then((value: Vertex) => {
+				if (value) {
+					resolve(this.convertFromVertex(this._initObject(value)));
+				}else{
+					reject(new Error('Error Occurred saving Person'));
+				}
+			}).catch((err: Error) =>{
+				reject(err);
 			});
-		}else {
-			return createVertex('Person', this.toObject(), this.db).then((personResp: IPersonDocument) => {
-				this._initObject(personResp);
-				return this;
-			});
-		}
+		});
 	}
 }

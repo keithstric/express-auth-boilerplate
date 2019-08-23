@@ -9,6 +9,7 @@ import { logger } from '../config/logger';
 import authReqMiddleware from '../config/restrict-path';
 import { getVerticesByType, getVertexByProperty, getVerticesByQuery, createPassword } from '../helpers/db-helpers';
 import { Person, IPersonDocument } from '../models/Person';
+import { Vertex } from '../models/Vertex';
 
 const initDbEndpoints = (app: Application, db: Db) => {
 	/**
@@ -115,7 +116,7 @@ const initDbEndpoints = (app: Application, db: Db) => {
 	 *   put:
 	 *     tags:
 	 *       - Db
-	 *     description: Update a single Vertex's values
+	 *     description: Update a single Vertex's values. This requires all the properties of the vertex, not JUST the properties changed
 	 *     responses:
 	 *       200:
 	 *         $ref: '#/components/responses/Vertex'
@@ -141,8 +142,9 @@ const initDbEndpoints = (app: Application, db: Db) => {
 	app.put('/api/vertex/:vertexId', authReqMiddleware, (req: Request, res: Response) => {
 		const {vertexId} = req.params;
 		if (vertexId) {
+			const newPayload = Object.assign({}, req.body);
+			newPayload.id = newPayload.id || vertexId;
 			if (req.body['@class'] === 'Person') {
-				const newPayload = Object.assign({}, req.body);
 				const {new_password, verify_password, email} = newPayload;
 				delete newPayload.password;
 				if (new_password && verify_password) {
@@ -165,18 +167,35 @@ const initDbEndpoints = (app: Application, db: Db) => {
 						});
 						return;
 					}else {
-						person.save().then((updatedPerson: Person) => {
-							res.send(updatedPerson.toJson());
-							logger.info(`User with rid ${person['@rid']} updated their profile}`);
-						}).catch((err: Error) => {
-							logger.error(`Person update failed. ${err.message}`);
-							res.status(500).send({message: err.message});
-						});
+						return person.save();
 					}
+				}).then((updatedPerson: Person) => {
+					if (updatedPerson) {
+						res.send(updatedPerson.toJson());
+						logger.info(`User with ${person['@rid'] ? 'rid' : 'id'} "${person['@rid'] ? person['@rid'] : person.id}" & email "${person.email}" updated their profile}`);
+					}
+				}).catch((err: Error) => {
+					logger.error(`User profile update failed. ${err.message}`);
+					res.status(500).send({message: err.message});
 				});
 			}else {
-				res.send({message: 'Unknown Class provided in the body of a request'});
+				const vertex: Vertex = new Vertex(db, newPayload);
+				vertex.save().then((val: any) => {
+					console.log(`db-endpoints PUT /api/vertex/:vertexId, val=${JSON.stringify(val)}`);
+					if (val) {
+						const updatedVertex = new Vertex(db, val);
+						res.send(updatedVertex.toJson());
+						logger.info(`Updated vertex with id "${vertex.id}"`);
+					}
+				});
 			}
+		}
+	});
+
+	app.patch('/api/vertex/:vertexId', (req: Request, res: Response) => {
+		const {vertexId} = req.params;
+		if (vertexId) {
+
 		}
 	});
 }
