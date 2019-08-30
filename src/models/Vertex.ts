@@ -101,7 +101,7 @@ export class Vertex implements IVertexDocument {
 	 */
 	save(vertexClass?: string): Promise<any> {
 		if (this.id) {
-			const useId = this['@rid'] || this.id;
+			const useId = this.id;
 			return updateVertex(useId, this.toObject(), this.db).then((updateCount: number) => {
 				return this.toObject();
 			});

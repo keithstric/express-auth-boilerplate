@@ -3,13 +3,14 @@
  * is being used JUST for Domino Authentication
  * @exports initDbEndpoints
  */
-import { Application, Request, Response, NextFunction } from 'express';
+import { Application, Request, Response } from 'express';
 import { Db } from 'orientjs';
 import { logger } from '../config/logger';
 import authReqMiddleware from '../config/restrict-path';
 import { getVerticesByType, getVertexByProperty, getVerticesByQuery, createPassword } from '../helpers/db-helpers';
-import { Person, IPersonDocument } from '../models/Person';
-import { Vertex } from '../models/Vertex';
+import { Vertex, IVertexDocument } from '../models/Vertex';
+import { PersonController } from '../controller/person-controller';
+import { VertexController } from '../controller/vertex-controller';
 
 const initDbEndpoints = (app: Application, db: Db) => {
 	/**
@@ -31,7 +32,7 @@ const initDbEndpoints = (app: Application, db: Db) => {
 	 *       - $ref: '#/components/parameters/DbQueryOperatorParam'
 	 */
 	app.get('/api/vertices', authReqMiddleware, (req: Request, res: Response) => {
-		getVerticesByQuery('V', req.query, db).then((resp: any) => {
+		getVerticesByQuery('V', req.query, db).then((resp: IVertexDocument[]) => {
 			res.send(resp);
 		}).catch((err: Error) => {
 			logger.error(`Error occurred at GET route /api/vertices: ${err.message}`);
@@ -65,14 +66,14 @@ const initDbEndpoints = (app: Application, db: Db) => {
 	 */
 	app.get('/api/vertices/:vertexType', authReqMiddleware, (req: Request, res: Response) => {
 		if (Object.keys(req.query).length === 0) {
-			getVerticesByType(req.params.vertexType, db).then((resp: any[]) => {
+			getVerticesByType(req.params.vertexType, db).then((resp: IVertexDocument[]) => {
 				res.send(resp);
 			}).catch((err: Error) => {
 				logger.error(`Error occurred at GET route /api/vertices/${req.params.vertexType}: ${err.message}`);
 				res.status(500).send(err);
 			});
 		}else {
-			getVerticesByQuery(req.params.vertexType, req.query, db).then((resp: any) => {
+			getVerticesByQuery(req.params.vertexType, req.query, db).then((resp: IVertexDocument[]) => {
 				res.send(resp);
 			}).catch((err: Error) => {
 				logger.error(`Error occurred at GET route /api/vertices/:vertexType: ${err.message}`);
@@ -103,8 +104,9 @@ const initDbEndpoints = (app: Application, db: Db) => {
 	 *           type: string
 	 */
 	app.get('/api/vertex/:vertexId', authReqMiddleware, (req: Request, res: Response) => {
-		getVertexByProperty(null, 'id', req.params.vertexId, db).then((resp: any) => {
-			res.send(resp);
+		getVertexByProperty(null, 'id', req.params.vertexId, db).then((resp: IVertexDocument) => {
+			const vert: Vertex = new Vertex(db, resp)
+			res.send(vert.toObject());
 		}).catch((err: Error) => {
 			logger.error(`Error occurred at GET route /vertex/:vertexId: ${err.message}`);
 			res.status(500).send(err);
@@ -143,59 +145,18 @@ const initDbEndpoints = (app: Application, db: Db) => {
 		const {vertexId} = req.params;
 		if (vertexId) {
 			const newPayload = Object.assign({}, req.body);
-			newPayload.id = newPayload.id || vertexId;
-			if (req.body['@class'] === 'Person') {
-				const {new_password, verify_password, email} = newPayload;
-				delete newPayload.password;
-				if (new_password && verify_password) {
-					if (new_password !== verify_password) {
-						res.send({message: 'Passwords don\'t match'});
-						return;
-					}else{
-						const hashedPassword = createPassword(new_password);
-						newPayload.password = hashedPassword;
-					}
-					delete newPayload.new_password;
-					delete newPayload.verify_password;
-				}
-				const person: Person = new Person(db, newPayload);
-				person.findPersonByEmail(email).then((existingPerson: IPersonDocument) => {
-					if (existingPerson && existingPerson.id !== person.id) {
-						res.send({
-							message: `User with email address ${existingPerson.email} already exists!`,
-							code: '01'
-						});
-						return;
-					}else {
-						return person.save();
-					}
-				}).then((updatedPerson: Person) => {
-					if (updatedPerson) {
-						res.send(updatedPerson.toJson());
-						logger.info(`User with ${person['@rid'] ? 'rid' : 'id'} "${person['@rid'] ? person['@rid'] : person.id}" & email "${person.email}" updated their profile}`);
-					}
-				}).catch((err: Error) => {
-					logger.error(`User profile update failed. ${err.message}`);
-					res.status(500).send({message: err.message});
-				});
+			if (newPayload.id && newPayload.id !== vertexId) {
+				res.status(400).send({message: `The ID in the payload (${newPayload.id}) does not match the id in the route (${vertexId})`});
 			}else {
-				const vertex: Vertex = new Vertex(db, newPayload);
-				vertex.save().then((val: any) => {
-					console.log(`db-endpoints PUT /api/vertex/:vertexId, val=${JSON.stringify(val)}`);
-					if (val) {
-						const updatedVertex = new Vertex(db, val);
-						res.send(updatedVertex.toJson());
-						logger.info(`Updated vertex with id "${vertex.id}"`);
-					}
-				});
+				newPayload.id = newPayload.id || vertexId;
+				if (req.body['@class'] && req.body['@class'].toLowerCase() === 'person') {
+					const controller = new PersonController(db);
+					controller.updatePerson(req, res);
+				}else {
+					const controller = new VertexController(db);
+					controller.updateVertex(req, res);
+				}
 			}
-		}
-	});
-
-	app.patch('/api/vertex/:vertexId', (req: Request, res: Response) => {
-		const {vertexId} = req.params;
-		if (vertexId) {
-
 		}
 	});
 }
