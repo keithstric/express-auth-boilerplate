@@ -130,10 +130,8 @@ export const updateVertex = (rid: string, payload: any, db: Db): Promise<any> =>
 		});
 	}
 	if (rid && rid.startsWith('#') && payload && Object.keys(payload).length > 0 && db) {
-		console.log('db-helpers.updateVertex, with rid=', rid);
 		return db.update(rid).set(payload).one(); // must use rid
 	}else if (rid && !rid.startsWith('#') && payload && Object.keys(payload).length > 0 && db) {
-		console.log('db-helpers.updateVertex, with id=', rid);
 		const vertexClass = payload['@class'] || 'VBase';
 		return getVertexByProperty(vertexClass, 'id', rid, db).then((resp: any) => {
 			return db.update(resp['@rid']).set(payload).one();

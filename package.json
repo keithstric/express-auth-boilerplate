@@ -13,7 +13,11 @@
 		"stop:docker": "docker-compose stop",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"author": "Red Pill Now <info@redpillnow.com>",
+	"author": {
+		"email": "info@redpillnow.com",
+		"name": "Red Pill Now",
+		"url": "https://redpillnow.com"
+	},
 	"license": "MIT",
 	"repository": {
 		"type": "git",

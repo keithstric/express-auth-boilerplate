@@ -3,9 +3,9 @@ import { Db } from 'orientjs';
 import { Request, Response, NextFunction } from 'express';
 import { logger } from '../config/logger';
 import passport from 'passport';
-import { PersonController } from './person-controller';
+import { Controller } from './controller';
 
-export class AuthenticationController extends PersonController {
+export class AuthenticationController extends Controller {
 	db: Db;
 
 	constructor(db: Db) {

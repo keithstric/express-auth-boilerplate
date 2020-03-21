@@ -5,6 +5,7 @@ import { IPersonDocument } from '../models/Person';
 import { PersonController } from './person-controller';
 import { VertexController } from './vertex-controller';
 import { AuthenticationController } from './auth-controller';
+import bcrypt from 'bcrypt';
 
 export enum ControllerTypes {
 	PERSON = 'person',
@@ -23,7 +24,7 @@ export class Controller {
 		}
 	}
 
-	getController(type: ControllerTypes, obj?: any): PersonController|VertexController|AuthenticationController|Controller {
+	private getController(type: ControllerTypes, obj?: any): PersonController|VertexController|AuthenticationController|Controller {
 		switch (type) {
 			case ControllerTypes.PERSON:
 				return new PersonController(this.db, obj);
@@ -85,11 +86,49 @@ export class Controller {
 	 * @param val {string}
 	 */
 	isEmail(val: string): boolean {
-		if (val) {
+		if (!val) {
 			throw new Error('You must provide a value');
 		}else{
 			const emailRegex: RegExp = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/;
 			return emailRegex.test(val);
 		}
+	}
+	/**
+	 * Do a lookup to the db by email address. Then verify if the returned person id is the same as the passed in
+	 * personId. If not, return a message otherwise return the IPersonDocument
+	 * @param email {string}
+	 * @param personId {string}
+	 */
+	verifyValidEmail(email: string, personId: string): Promise<IPersonDocument|{message: string, code: string}> {
+		if (email && this.isEmail(email)) {
+			return this.findVertexByProperty('email', email, 'Person').then((existingPerson: IPersonDocument) => {
+				if (existingPerson && existingPerson.id !== personId) {
+					return {
+						message: `User with email address ${email} already exists!`,
+						code: '01'
+					};
+				}
+				return existingPerson;
+			});
+		}
+	}
+	/**
+	 * Verify if 2 plain text passwords match
+	 * @param password1 {string} unencrypted password (i.e. value of the password field)
+	 * @param password2 {string} unencrypted password (i.e. value of the verify_password field)
+	 */
+	plainPasswordsMatch(password1: string, password2: string): boolean {
+		return password1 === password2;
+	}
+	/**
+	 * Create an encrypted password
+	 * @param typedPassword {string} plain text password (i.e. value of the password field)
+	 */
+	createPassword(typedPassword: string) {
+		if (typedPassword) {
+			const salt = bcrypt.genSaltSync(13);
+			return bcrypt.hashSync(typedPassword, salt);
+		}
+		throw new Error('Missing Parameters, typedPassword');
 	}
 }
