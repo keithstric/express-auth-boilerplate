@@ -24,7 +24,7 @@ export class Controller {
 		}
 	}
 
-	private getController(type: ControllerTypes, obj?: any): PersonController|VertexController|AuthenticationController|Controller {
+	/*private getController(type: ControllerTypes, obj?: any): PersonController|VertexController|AuthenticationController|Controller {
 		switch (type) {
 			case ControllerTypes.PERSON:
 				return new PersonController(this.db, obj);
@@ -37,7 +37,7 @@ export class Controller {
 				break;
 		}
 		return this;
-	}
+	}*/
 	/**
 	 * Find a person by their email address or id
 	 * @param propVal {string} an id or email address

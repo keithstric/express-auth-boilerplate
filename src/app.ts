@@ -1,4 +1,4 @@
-import express, { Request, Response, Application } from 'express';
+import express, {Request, Response, Application, NextFunction} from 'express';
 import session from 'express-session';
 import flash from 'express-flash';
 import swaggerDocs from './config/swaggerDoc';
@@ -20,6 +20,11 @@ const db = getDbConn();
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(flash());
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+	logger.info(`${req.ip} visited ${req.url}`);
+	next();
+});
 
 /**
  * Setup the redis store for session storage
