@@ -1,6 +1,8 @@
 /**
  * Various Interfaces used throughout this project. Add additional Interfaces here
  */
+import Transport from 'winston-transport';
+import {Db} from "orientjs";
 
 /**
  * Interface for the object used to build a database query. This is currently built from
@@ -30,4 +32,8 @@ export interface ILogEntry {
 	level: LogLevels;
 	service: string;
 	timestamp: string;
+}
+
+export interface IOrientDbTransportConfig extends Transport.TransportStreamOptions {
+	db?: Db
 }
