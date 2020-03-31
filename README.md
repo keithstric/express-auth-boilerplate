@@ -87,6 +87,31 @@ After cloning this repository you will find the `.env.default` file. Copy this f
 
 After the initial process has been executed and you have 3 docker containers running. Ensure you can access those containers via a browser or Curl command. As you make changes to your application and save your changes, you should see the express-auth-boilerplate container restart the node application. Your changes will be available after the restart.
 
+### Renaming the Orient database
+
+If you wish to rename the database to something that better suits the project. In your file manager, navigate to `./orientdb/databases` and rename the below files and directories:
+
+* express-auth-boilerplate directory
+* All `express-auth-boilerplate*.wal` files
+* All `express-auth-boilerplat*.wmr` files
+
+Please be aware that renaming the database will prompt some required and some optional code changes. This list may/may not be complete:
+
+* `./.env`
+    * DB_NAME
+    * WEB_SESS_NAME(?)
+* `./src/config/logger/logger.ts` - Update service name
+* `./src/config/swaggerDoc.ts` - Update title
+* `./src/app.ts` - Update log message for server startup
+* `./docker-compose.yml`
+    * *NOT* express-auth-boilerplate image name
+    * express-auth-server service name
+    * express-auth-server volume names
+* `./Dockerfile` - WORKDIR
+* `./package.json` - name property
+* `./client/src/pages/Home.tsx` - setHeader
+* `./client/src/components/AppContext.tsx` - header
+
 ### Express Routes
 
 The following routes are available within this project.
