@@ -4,12 +4,6 @@ import { IVertexDocument } from '../models/Vertex';
 import { IPersonDocument } from '../models/Person';
 import bcrypt from 'bcrypt';
 
-export enum ControllerTypes {
-	PERSON = 'person',
-	VERTEX = 'vertex',
-	AUTHENTICATION = 'authentication'
-}
-
 export class Controller {
 	db: Db;
 
@@ -37,6 +31,7 @@ export class Controller {
 			});
 		}
 	}
+
 	/**
 	 * Find a vertex by a property name and value
 	 * @param propertyName {string}
@@ -52,6 +47,7 @@ export class Controller {
 		}
 		throw new Error(`Missing argument(s) propertyName = ${propertyName}, propertyValue = ${propertyVal}`);
 	}
+
 	/**
 	 * Check if a string's pattern matches that of a uuid
 	 * @param val {string}
@@ -64,6 +60,7 @@ export class Controller {
 			return idRegex.test(val);
 		}
 	}
+
 	/**
 	 * Check if a string's pattern matches that of an email address
 	 * @param val {string}
@@ -76,6 +73,7 @@ export class Controller {
 			return emailRegex.test(val);
 		}
 	}
+
 	/**
 	 * Do a lookup to the db by email address. Then verify if the returned person id is the same as the passed in
 	 * personId. If not, return a message otherwise return the IPersonDocument
@@ -95,6 +93,7 @@ export class Controller {
 			});
 		}
 	}
+
 	/**
 	 * Verify if 2 plain text passwords match
 	 * @param password1 {string} unencrypted password (i.e. value of the password field)
@@ -103,6 +102,7 @@ export class Controller {
 	plainPasswordsMatch(password1: string, password2: string): boolean {
 		return password1 === password2;
 	}
+
 	/**
 	 * Create an encrypted password
 	 * @param typedPassword {string} plain text password (i.e. value of the password field)

@@ -17,10 +17,6 @@ import {requestLogger} from "./config/logger/request-logger-middleware";
 const app: Application = express();
 const port = parseInt(process.env.WEB_PORT);
 const db = getDbConn();
-/**
- * Add our custom logger transport
- */
-logger.add(new OrientDbTransport({level: LogLevels.INFO, db: db}));
 
 /**
  * express middleware

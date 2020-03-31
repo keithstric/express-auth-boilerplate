@@ -20,6 +20,7 @@ export interface IVertexDocument {
 	db?: Db;
 	[x: string]: any;
 }
+
 /**
  * The Vertex class
  * @class {Vertex}
@@ -33,6 +34,7 @@ export class Vertex implements IVertexDocument {
 	created_date?: string;
 	id?: string;
 	db?: Db;
+
 	/**
 	 * Create a new instance of the Vertex class
 	 * @param db {Db}
@@ -48,6 +50,7 @@ export class Vertex implements IVertexDocument {
 			throw new Error('You must provide a Db');
 		}
 	}
+
 	/**
 	 * Populate the properties of this class with the properties from orientDb
 	 * @param apiObj {IVertexDocument}
@@ -58,6 +61,7 @@ export class Vertex implements IVertexDocument {
 		}
 		return this;
 	}
+
 	/**
 	 * Find a vertex by a property name and value
 	 * @param propertyName {string}
@@ -73,6 +77,7 @@ export class Vertex implements IVertexDocument {
 		}
 		throw new Error(`Missing argument(s) propertyName = ${propertyName}, propertyValue = ${propertyVal}`);
 	}
+
 	/**
 	 * Get an object representing this class instance
 	 * @return {IPersonDocument}
@@ -87,14 +92,16 @@ export class Vertex implements IVertexDocument {
 		});
 		return obj;
 	}
+
 	/**
 	 * Get a JSON string representing this class instance
 	 * @return {string};
 	 */
-	toJson(): string {
+	toJsonString(): string {
 		const obj = this.toObject();
 		return JSON.stringify(obj);
 	}
+
 	/**
 	 * Save this model to the db
 	 * @return {Promise<Person>}

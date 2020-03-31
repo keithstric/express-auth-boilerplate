@@ -17,6 +17,7 @@ export class PersonController extends VertexController {
 			throw new Error('You must provide the Database connection to PersonController');
 		}
 	}
+
 	/**
 	 * Update the values of a Person vertex. If a password is provided, update the password. If an email
 	 * address is provided AND it doesn't match an already registered email address, update the password.
@@ -50,7 +51,7 @@ export class PersonController extends VertexController {
 			}
 		}).then((updatedPerson: Person) => {
 			if (updatedPerson) {
-				res.send(updatedPerson.toJson());
+				res.send(updatedPerson.toJsonString());
 				logger.info(`User with ${this.person['@rid'] ? 'rid' : 'id'} "${this.person['@rid'] ? this.person['@rid'] : this.person.id}" & email "${this.person.email}" updated their profile}`);
 			}
 		}).catch((err: Error) => {

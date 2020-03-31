@@ -24,6 +24,7 @@ export class Person extends Vertex implements IPersonDocument {
 	first_name: string;
 	last_name: string;
 	password: string;
+
 	/**
 	 * Create a new instance of the Person class
 	 * @param db {Db}
@@ -33,6 +34,7 @@ export class Person extends Vertex implements IPersonDocument {
 	constructor(db: Db, apiObj?: IPersonDocument) {
 		super(db, apiObj);
 	}
+
 	/**
 	 * Find a person by an ID
 	 * @param id {string}
@@ -44,6 +46,7 @@ export class Person extends Vertex implements IPersonDocument {
 		}
 		throw new Error('You must provide an id');
 	}
+
 	/**
 	 * Find a person by an email address
 	 * @param id {string}
@@ -55,6 +58,7 @@ export class Person extends Vertex implements IPersonDocument {
 		}
 		throw new Error('You must provide an email address');
 	}
+
 	/**
 	 * Find a person by a property name and value
 	 * @param propertyName {string}
@@ -64,6 +68,7 @@ export class Person extends Vertex implements IPersonDocument {
 	private _findPerson(propertyName: string, propertyValue: string|number): Promise<IPersonDocument> {
 		return super.findVertexByProperty(propertyName, propertyValue, 'Person');
 	}
+
 	/**
 	 * Convert a Vertex to a Person
 	 * @param vertex {Vertex}
@@ -74,6 +79,7 @@ export class Person extends Vertex implements IPersonDocument {
 		}
 		return this;
 	}
+
 	/**
 	 * Compare the typedPassword with the hashed password
 	 * @param typedPassword {string}
@@ -85,6 +91,7 @@ export class Person extends Vertex implements IPersonDocument {
 		}
 		throw new Error('You must provide a typedPassword to compare with');
 	}
+
 	/**
 	 * Save this model to the db
 	 * @return {Promise<Person>}

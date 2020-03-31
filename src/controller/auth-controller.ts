@@ -16,6 +16,7 @@ export class AuthenticationController extends Controller {
 			throw new Error('You must provide the Database connection to AuthenticationController');
 		}
 	}
+
 	/**
 	 * Login a user and send the user object
 	 * @param req {Reqeust}
@@ -43,6 +44,7 @@ export class AuthenticationController extends Controller {
 			}
 		})(req, res, next);
 	}
+
 	/**
 	 * Register a person and send the IPersonDocument or an error message
 	 * @param req {Request}
@@ -91,6 +93,7 @@ export class AuthenticationController extends Controller {
 			});
 		}
 	}
+
 	/**
 	 * Logout a user and redirect to the login page
 	 * @param req {Request}

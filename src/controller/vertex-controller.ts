@@ -15,6 +15,7 @@ export class VertexController extends Controller {
 			throw new Error('You must provide the Database connection to VertexController');
 		}
 	}
+
 	/**
 	 * Update the values of a vertex
 	 * @param req {Request}
@@ -38,7 +39,7 @@ export class VertexController extends Controller {
 			vertex.save().then((val: IVertexDocument) => {
 				if (val) {
 					const updatedVertex = new Vertex(this.db, val);
-					res.send(updatedVertex.toJson());
+					res.send(updatedVertex.toJsonString());
 					logger.info(`Updated vertex with id "${vertex.id}"`);
 				}
 			});

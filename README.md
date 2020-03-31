@@ -8,53 +8,12 @@ The following services are provided by this project:
 
 * Express.js Application
 	* Passport Authentication (local)
-	* Winston logging to files and console
+	* Winston logging to OrientDb and console
 	* Swagger docs (/api-docs)
 	* Swagger json file (/api-docs.json)
 * Base React client application
 * OrientDB
 * Redis - For pub/sub and Session storage
-
-## Directory structure
-
-The following is the directory structure of this project. `dist` directories are not included in this list as they are produced programmatically.
-
-```
-.
-├── client - Contains the client application. This currently has a React project initialized
-├── src - Contains the source code for the express application
-│   ├── config - Directory for server configuration files (i.e. DB, Passport, etc.)
-│   │   ├── logger.ts - Logger configuration
-│   │   ├── orient-db.ts - Setup the OrientDb connection and middleware
-│   │   ├── passport.ts - Passport middleware configuration
-│   │   ├── restrict-path.ts - Route Authorization middleware
-│   │   └── swaggerDoc.ts - Swagger middleware configuration, shared components and tags
-│   ├── helpers - Directory for common helper type files
-│   │   └── db-helpers.ts - Various DB helper functions
-│   ├── models - Directory for Data Model storage
-│   │   ├── Person.ts - The Person model
-│   │   └── Vertex.ts - The Vertex model
-│   ├── orientdb - This directory contains files required for the OrientDB Docker container
-│   │   ├── backup - Backups
-│   │   └── databases - Contains the database schema and data
-│   ├── redisData - Redis data for the Redis Docker Container
-│   └── routes
-│   │   ├── auth-endpoints.ts - Authentication routes
-│   │   ├── db-endpoints.ts - DB Endpoints
-│   │   ├── index.ts - Initialize all Endpoints
-│   │   └── system-endpoints.ts - System Routes (Currently only a `logs` route to fetch the logs)
-│   ├── app.ts - The application entry point
-│   └── express-auth-types.ts - Typescript definitions for this project
-├── .dockerignore - Files/Directories to ignore while copying data to a docker container
-├── .env - Environment variables for the express application - *NOT STORED IN REPOSITORY*
-├── .env.default - Default `.env` structure *DO NOT DELETE*
-├── .gitignore - Files/Directories to ignore when committing to the repository
-├── Dockerfile - Docker environment configuration
-├── README.md - This readme file
-├── docker-compose.yml - Docker container configuration
-├── package.json - Node.js configuration
-└── tsconfig.json - Typescript Configuration
-```
 
 ## Dependencies
 
@@ -163,7 +122,7 @@ The following directories are defined as volumes inside Docker. This ensures any
 * `./src/` --> `/usr/express-auth-boilerplate/src/`
 * `./orientdb/backup` --> `/orientdb/backup/`
 * `./orientdb/databases` --> `/orientdb/databases/`
-* `./redisData/` --> `/data/`
+* `./redisData/` --> `/redisData/`
 
 ### Docker Port Mapping
 

@@ -1,7 +1,16 @@
+/**
+ * This file is to setup logging of all requests
+ */
 import {NextFunction, Request, Response} from "express";
 import {logger} from "./logger";
 import {IRequestLogEntry, LogLevels} from "../../express-auth-types";
 
+/**
+ * Middleware function to setup logging of all requests made to this server
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ */
 export function requestLogger(req: Request, res: Response, next: NextFunction) {
 	const startTime = new Date();
 	let body: any = null;

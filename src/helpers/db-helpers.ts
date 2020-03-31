@@ -118,7 +118,7 @@ export const createEdge = (label: string, fromRid: string, toRid: string, db: Db
 	const argsObj = {label: label, fromRid: fromRid, toRid: toRid, db: db};
 	const msg = _getMissingParamsMsg(argsObj);
 	throw new Error(msg);
-}
+};
 
 /**
  * Update property values in a vertex
@@ -147,10 +147,10 @@ export const updateVertex = (rid: string, payload: any, db: Db): Promise<any> =>
 	const argsObj = {rid: rid, payload: payload, db: db};
 	const msg = _getMissingParamsMsg(argsObj);
 	throw new Error(msg);
-}
+};
 
 /**
- * Get the verex IDs for a label
+ * Get the vertex IDs for a label
  * @param vertex {any}
  * @param label {string}
  * @return {string[]}
@@ -173,7 +173,7 @@ export const getVertexEdges = (vertex: any, label: string): string[] => {
 	const argsObj = {vertex: vertex, label: label};
 	const msg = _getMissingParamsMsg(argsObj);
 	throw new Error(msg);
-}
+};
 
 const _getMissingParamsMsg = (paramsObj: any) => {
 	let msg = 'Missing Parameters';
@@ -190,4 +190,4 @@ const _getMissingParamsMsg = (paramsObj: any) => {
 		}
 	}
 	return msg;
-}
+};

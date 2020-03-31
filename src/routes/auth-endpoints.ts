@@ -12,6 +12,7 @@ import { AuthenticationController } from '../controller/auth-controller';
 const initAuthEndpoints = (app: Application, db: Db) => {
 	// Required for React to locate bundles
 	app.use(express.static(path.join(__dirname, '..', '..', 'client', 'build')));
+
 	/**
 	 * @swagger
 	 * /login:
@@ -28,6 +29,7 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	app.get('/login', (req: Request, res: Response) => {
 		res.sendFile(path.join(__dirname, '..', '..', 'client', 'build', 'index.html'));
 	});
+
 	/**
 	 * @swagger
 	 * /login:
@@ -64,6 +66,7 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 			console.error(e);
 		}
 	});
+
 	/**
 	 * @swagger
 	 * /register:
@@ -115,6 +118,7 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 			console.error(e);
 		}
 	});
+
 	/**
 	 * @swagger
 	 * /logout:
@@ -139,6 +143,6 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 			console.error(e);
 		}
 	});
-}
+};
 
 export default initAuthEndpoints;

@@ -4,10 +4,9 @@
  */
 import {createLogger, format, transports} from 'winston';
 import * as events from 'events';
-
-
-class AppEventEmitter extends events.EventEmitter {};
-export const appEventEmitter = new AppEventEmitter();
+import {OrientDbTransport} from "./orientdb-transport";
+import {LogLevels} from "../../express-auth-types";
+import getDbConn from "../orient-db";
 
 export const logger = createLogger({
 	level: 'info',
@@ -26,6 +25,11 @@ export const logger = createLogger({
 	]
 });
 
+/**
+ * Add our custom OrientDb logger transport
+ */
+const db = getDbConn();
+logger.add(new OrientDbTransport({level: LogLevels.INFO, db: db}));
 if (process.env.NODE_ENV !== 'production') {
 	logger.add(new transports.Console({
 		format: format.combine(

@@ -39,6 +39,7 @@ const initDbEndpoints = (app: Application, db: Db) => {
 			res.status(500).send(err);
 		});
 	});
+
 	/**
 	 * @swagger
 	 * /api/vertices/{vertexType}:
@@ -81,6 +82,7 @@ const initDbEndpoints = (app: Application, db: Db) => {
 			});
 		}
 	});
+
 	/**
 	 * @swagger
 	 * /api/vertex/{vertexId}:
@@ -112,6 +114,7 @@ const initDbEndpoints = (app: Application, db: Db) => {
 			res.status(500).send(err);
 		});
 	});
+
 	/**
 	 * @swagger
 	 * /api/vertex/{vertexId}:
@@ -159,6 +162,6 @@ const initDbEndpoints = (app: Application, db: Db) => {
 			}
 		}
 	});
-}
+};
 
 export default initDbEndpoints;
