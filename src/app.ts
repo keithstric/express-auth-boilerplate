@@ -1,12 +1,15 @@
-import express, {Request, Response, Application, NextFunction} from 'express';
+import express, {Request, Response, Application, NextFunction, response} from 'express';
 import session from 'express-session';
 import flash from 'express-flash';
 import swaggerDocs from './config/swaggerDoc';
 import getDbConn from './config/orient-db';
 import connectRedis, {RedisStoreOptions} from 'connect-redis';
 import initPassport from './config/passport';
-import {logger} from './config/logger';
+import {logger} from './config/logger/logger';
 import initEndpoints from './routes/index';
+import {LogLevels} from "./express-auth-types";
+import {OrientDbTransport} from "./config/logger/orientdb-transport";
+import {requestLogger} from "./config/logger/request-logger-middleware";
 
 /**
  * Setup the application
@@ -15,17 +18,21 @@ const app: Application = express();
 const port = parseInt(process.env.WEB_PORT);
 const db = getDbConn();
 /**
+ * Add our custom logger transport
+ */
+logger.add(new OrientDbTransport({level: LogLevels.INFO, db: db}));
+
+/**
  * express middleware
  */
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(flash());
 
-app.use((req: Request, res: Response, next: NextFunction) => {
-	logger.info(`${req.ip} visited ${req.url}`);
-	next();
-});
-
+/**
+ * Middleware to log all requests/responses made to this server
+ */
+app.use(requestLogger);
 /**
  * Setup the redis store for session storage
  */

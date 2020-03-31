@@ -1,7 +1,7 @@
 import { IPersonDocument, Person } from '../models/Person';
 import { Db } from 'orientjs';
 import { Request, Response, NextFunction } from 'express';
-import { logger } from '../config/logger';
+import { logger } from '../config/logger/logger';
 import passport from 'passport';
 import { Controller } from './controller';
 

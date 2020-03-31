@@ -2,9 +2,6 @@ import { Db } from 'orientjs';
 import { getVertexByProperty } from '../helpers/db-helpers';
 import { IVertexDocument } from '../models/Vertex';
 import { IPersonDocument } from '../models/Person';
-import { PersonController } from './person-controller';
-import { VertexController } from './vertex-controller';
-import { AuthenticationController } from './auth-controller';
 import bcrypt from 'bcrypt';
 
 export enum ControllerTypes {
@@ -24,20 +21,6 @@ export class Controller {
 		}
 	}
 
-	/*private getController(type: ControllerTypes, obj?: any): PersonController|VertexController|AuthenticationController|Controller {
-		switch (type) {
-			case ControllerTypes.PERSON:
-				return new PersonController(this.db, obj);
-				break;
-			case ControllerTypes.VERTEX:
-				return new VertexController(this.db, obj);
-				break;
-			case ControllerTypes.AUTHENTICATION:
-				return new AuthenticationController(this.db);
-				break;
-		}
-		return this;
-	}*/
 	/**
 	 * Find a person by their email address or id
 	 * @param propVal {string} an id or email address

@@ -5,7 +5,7 @@
 import * as path from 'path';
  import express, { Application, Request, Response, NextFunction } from 'express';
 import { Db } from 'orientjs';
-import { logger } from '../config/logger';
+import { logger } from '../config/logger/logger';
 import authReqMiddleware from '../config/restrict-path';
 import { AuthenticationController } from '../controller/auth-controller';
 
@@ -56,8 +56,13 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *                 type: string
 	 */
 	app.post('/login', (req: Request, res: Response, next: NextFunction) => {
-		const controller = new AuthenticationController(db);
-		controller.login(req, res, next);
+		try {
+			const controller = new AuthenticationController(db);
+			controller.login(req, res, next);
+		}catch(e) {
+			logger.error(`An error occurred during login: ${e.message}`);
+			console.error(e);
+		}
 	});
 	/**
 	 * @swagger
@@ -102,8 +107,13 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *                 type: string
 	 */
 	app.post('/register', (req: Request, res: Response) => {
-		const controller = new AuthenticationController(db);
-		controller.registerPerson(req, res);
+		try {
+			const controller = new AuthenticationController(db);
+			controller.registerPerson(req, res);
+		}catch(e) {
+			logger.error(`An error occurred registering a user: ${e.message}`);
+			console.error(e);
+		}
 	});
 	/**
 	 * @swagger
@@ -121,8 +131,13 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *         $ref: '#/components/responses/Error'
 	 */
 	app.get('/logout', authReqMiddleware, (req: Request, res: Response) => {
-		const controller = new AuthenticationController(db);
-		controller.logout(req, res);
+		try {
+			const controller = new AuthenticationController(db);
+			controller.logout(req, res);
+		}catch(e) {
+			logger.error(`An error occurred during logout: ${e.message}`);
+			console.error(e);
+		}
 	});
 }
 

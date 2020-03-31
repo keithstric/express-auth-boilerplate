@@ -1,7 +1,7 @@
 import { Db } from 'orientjs';
 import { Vertex, IVertexDocument } from '../models/Vertex';
 import { Request, Response } from 'express';
-import { logger } from '../config/logger';
+import { logger } from '../config/logger/logger';
 import { Controller } from './controller';
 
 export class VertexController extends Controller {

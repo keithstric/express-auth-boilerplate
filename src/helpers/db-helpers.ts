@@ -5,6 +5,7 @@
 import { Db } from 'orientjs';
 import bcrypt from 'bcrypt';
 import {IDbQuery} from '../express-auth-types';
+
 /**
  * Get a vertex by a value in a property from orient db
  * @param vertexClassName {string}
@@ -24,6 +25,7 @@ export const getVertexByProperty = (vertexClassName: string, propertyName: strin
 	const msg = _getMissingParamsMsg(argsObj);
 	throw new Error(msg);
 };
+
 /**
  * Get an array of vertex types
  * @param vertexClassName {string}
@@ -38,6 +40,7 @@ export const getVerticesByType = (vertexClassName: string, db: Db) => {
 	const msg = _getMissingParamsMsg(argsObj);
 	throw new Error(msg);
 }
+
 /**
  * Perform a query against the DB
  * @param vertexClassName {string}
@@ -45,7 +48,7 @@ export const getVerticesByType = (vertexClassName: string, db: Db) => {
  * @param db {Db}
  * @returns {Promise<any[]>}
  */
-export const getVerticesByQuery = (vertexClassName: string, queryObj: IDbQuery, db: Db) => {
+export const getVerticesByQueryObj = (vertexClassName: string, queryObj: IDbQuery, db: Db) => {
 	if (vertexClassName && queryObj && db) {
 		let query = `select from ${vertexClassName}`;
 		Object.keys(queryObj).forEach((key: string, idx: number) => {
@@ -65,6 +68,7 @@ export const getVerticesByQuery = (vertexClassName: string, queryObj: IDbQuery, 
 	const msg = _getMissingParamsMsg(argsObj);
 	throw new Error(msg);
 }
+
 /**
  * Create a hashed password from the passed in password using bcrypt
  * @param typedPassword {string}
@@ -77,6 +81,7 @@ export const createPassword = (typedPassword: string) => {
 	}
 	throw new Error('Missing Parameters, typedPassword');
 }
+
 /**
  * Create a vertex in orientDb
  * @param vertexClass {String}
@@ -92,6 +97,7 @@ export const createVertex = (vertexClass: string, payload: any, db: Db): Promise
 	const msg = _getMissingParamsMsg(argsObj);
 	throw new Error(msg);
 }
+
 /**
  * Create an edge between 2 vertices
  * @param label {string}
@@ -113,6 +119,7 @@ export const createEdge = (label: string, fromRid: string, toRid: string, db: Db
 	const msg = _getMissingParamsMsg(argsObj);
 	throw new Error(msg);
 }
+
 /**
  * Update property values in a vertex
  * @param rid {string}
@@ -141,6 +148,7 @@ export const updateVertex = (rid: string, payload: any, db: Db): Promise<any> =>
 	const msg = _getMissingParamsMsg(argsObj);
 	throw new Error(msg);
 }
+
 /**
  * Get the verex IDs for a label
  * @param vertex {any}

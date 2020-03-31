@@ -7,7 +7,7 @@ import passportLocal from 'passport-local';
 import { Application } from 'express';
 import { Db } from 'orientjs';
 import { Person, IPersonDocument } from '../models/Person';
-import { logger } from './logger';
+import { logger } from './logger/logger';
 
 const initPassport = (app: Application, db: Db) => {
 	app.use(passport.initialize());

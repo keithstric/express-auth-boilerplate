@@ -44,7 +44,7 @@ The following is the directory structure of this project. `dist` directories are
 │   │   ├── index.ts - Initialize all Endpoints
 │   │   └── system-endpoints.ts - System Routes (Currently only a `logs` route to fetch the logs)
 │   ├── app.ts - The application entry point
-│   └── express-auth-types.d.ts - Typescript definitions for this project
+│   └── express-auth-types.ts - Typescript definitions for this project
 ├── .dockerignore - Files/Directories to ignore while copying data to a docker container
 ├── .env - Environment variables for the express application - *NOT STORED IN REPOSITORY*
 ├── .env.default - Default `.env` structure *DO NOT DELETE*

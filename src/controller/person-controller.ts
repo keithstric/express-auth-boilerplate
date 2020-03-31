@@ -1,7 +1,7 @@
 import { Person, IPersonDocument } from '../models/Person';
 import { Db } from 'orientjs';
 import { Request, Response } from 'express';
-import { logger } from '../config/logger';
+import { logger } from '../config/logger/logger';
 import { VertexController } from './vertex-controller';
 
 export class PersonController extends VertexController {

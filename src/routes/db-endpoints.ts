@@ -5,9 +5,9 @@
  */
 import { Application, Request, Response } from 'express';
 import { Db } from 'orientjs';
-import { logger } from '../config/logger';
+import { logger } from '../config/logger/logger';
 import authReqMiddleware from '../config/restrict-path';
-import { getVerticesByType, getVertexByProperty, getVerticesByQuery, createPassword } from '../helpers/db-helpers';
+import { getVerticesByType, getVertexByProperty, getVerticesByQueryObj, createPassword } from '../helpers/db-helpers';
 import { Vertex, IVertexDocument } from '../models/Vertex';
 import { PersonController } from '../controller/person-controller';
 import { VertexController } from '../controller/vertex-controller';
@@ -32,7 +32,7 @@ const initDbEndpoints = (app: Application, db: Db) => {
 	 *       - $ref: '#/components/parameters/DbQueryOperatorParam'
 	 */
 	app.get('/api/vertices', authReqMiddleware, (req: Request, res: Response) => {
-		getVerticesByQuery('V', req.query, db).then((resp: IVertexDocument[]) => {
+		getVerticesByQueryObj('V', req.query, db).then((resp: IVertexDocument[]) => {
 			res.send(resp);
 		}).catch((err: Error) => {
 			logger.error(`Error occurred at GET route /api/vertices: ${err.message}`);
@@ -73,7 +73,7 @@ const initDbEndpoints = (app: Application, db: Db) => {
 				res.status(500).send(err);
 			});
 		}else {
-			getVerticesByQuery(req.params.vertexType, req.query, db).then((resp: IVertexDocument[]) => {
+			getVerticesByQueryObj(req.params.vertexType, req.query, db).then((resp: IVertexDocument[]) => {
 				res.send(resp);
 			}).catch((err: Error) => {
 				logger.error(`Error occurred at GET route /api/vertices/:vertexType: ${err.message}`);
