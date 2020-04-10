@@ -36,40 +36,6 @@ export class Person extends Vertex implements IPersonDocument {
 	}
 
 	/**
-	 * Find a person by an ID
-	 * @param id {string}
-	 * @return {Promise<Person>}
-	 */
-	findPersonById(id: string): Promise<IPersonDocument> {
-		if (id) {
-			return this._findPerson('id', id);
-		}
-		throw new Error('You must provide an id');
-	}
-
-	/**
-	 * Find a person by an email address
-	 * @param id {string}
-	 * @return {Promise<Person>}
-	 */
-	findPersonByEmail(email: string): Promise<IPersonDocument> {
-		if (email) {
-			return this._findPerson('email', email.toLowerCase());
-		}
-		throw new Error('You must provide an email address');
-	}
-
-	/**
-	 * Find a person by a property name and value
-	 * @param propertyName {string}
-	 * @param propertyValue {string|number}
-	 * @return {Promise<Person>}
-	 */
-	private _findPerson(propertyName: string, propertyValue: string|number): Promise<IPersonDocument> {
-		return super.findVertexByProperty(propertyName, propertyValue, 'Person');
-	}
-
-	/**
 	 * Convert a Vertex to a Person
 	 * @param vertex {Vertex}
 	 */
@@ -78,18 +44,6 @@ export class Person extends Vertex implements IPersonDocument {
 			Object.assign(this, vertex);
 		}
 		return this;
-	}
-
-	/**
-	 * Compare the typedPassword with the hashed password
-	 * @param typedPassword {string}
-	 * @return {boolean}
-	 */
-	comparePassword(typedPassword: string): boolean {
-		if (typedPassword) {
-			return bcrypt.compareSync(typedPassword, this.password);
-		}
-		throw new Error('You must provide a typedPassword to compare with');
 	}
 
 	/**

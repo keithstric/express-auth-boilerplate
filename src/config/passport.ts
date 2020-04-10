@@ -6,6 +6,7 @@ import passport from 'passport';
 import passportLocal from 'passport-local';
 import { Application } from 'express';
 import { Db } from 'orientjs';
+import {PersonController} from '../controller/person-controller';
 import { Person, IPersonDocument } from '../models/Person';
 import { logger } from './logger/logger';
 
@@ -30,10 +31,12 @@ const initPassport = (app: Application, db: Db) => {
 	 */
 	passport.use(new passportLocal.Strategy({usernameField: 'email'}, (email: string, password: string, done: any) => {
 		const user = new Person(db);
-		user.findPersonByEmail(email).then((personDoc: IPersonDocument) => {
+		const personController = new PersonController(db);
+		personController.findPersonByEmail(email).then((personDoc: IPersonDocument) => {
 			const person = personDoc ? new Person(db, personDoc) : undefined;
 			if (person) {
-				if (person.comparePassword(password)) {
+				personController.person = person;
+				if (personController.comparePassword(password)) {
 					done(null, person);
 				}else {
 					done(null, false, {message: 'Incorrect Password'});
@@ -49,6 +52,6 @@ const initPassport = (app: Application, db: Db) => {
 			done(err, false, {message: err.message});
 		});
 	}));
-}
+};
 
 export default initPassport;

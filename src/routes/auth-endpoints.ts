@@ -3,11 +3,11 @@
  * @exports initClientEndpoints
  */
 import * as path from 'path';
- import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import { Db } from 'orientjs';
 import { logger } from '../config/logger/logger';
 import authReqMiddleware from '../config/restrict-path';
-import { AuthenticationController } from '../controller/auth-controller';
+import {PersonController} from '../controller/person-controller';
 
 const initAuthEndpoints = (app: Application, db: Db) => {
 	// Required for React to locate bundles
@@ -15,7 +15,7 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 
 	/**
 	 * @swagger
-	 * /login:
+	 * /auth/login:
 	 *   get:
 	 *     tags:
 	 *       - authentication
@@ -26,13 +26,13 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *         schema:
 	 *           type: string
 	 */
-	app.get('/login', (req: Request, res: Response) => {
+	app.get('/auth/login', (req: Request, res: Response) => {
 		res.sendFile(path.join(__dirname, '..', '..', 'client', 'build', 'index.html'));
 	});
 
 	/**
 	 * @swagger
-	 * /login:
+	 * /api/login:
 	 *   post:
 	 *     tags:
 	 *       - authentication
@@ -57,9 +57,9 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *                 description: User's password
 	 *                 type: string
 	 */
-	app.post('/login', (req: Request, res: Response, next: NextFunction) => {
+	app.post('/api/login', (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const controller = new AuthenticationController(db);
+			const controller = new PersonController(db);
 			controller.login(req, res, next);
 		}catch(e) {
 			logger.error(`An error occurred during login: ${e.message}`);
@@ -69,7 +69,7 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 
 	/**
 	 * @swagger
-	 * /register:
+	 * /api/register:
 	 *   post:
 	 *     tags:
 	 *       - authentication
@@ -109,9 +109,9 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *                 description: Verify User's password
 	 *                 type: string
 	 */
-	app.post('/register', (req: Request, res: Response) => {
+	app.post('/api/register', (req: Request, res: Response) => {
 		try {
-			const controller = new AuthenticationController(db);
+			const controller = new PersonController(db);
 			controller.registerPerson(req, res);
 		}catch(e) {
 			logger.error(`An error occurred registering a user: ${e.message}`);
@@ -121,7 +121,7 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 
 	/**
 	 * @swagger
-	 * /logout:
+	 * /api/logout:
 	 *   get:
 	 *     tags:
 	 *       - authentication
@@ -134,9 +134,9 @@ const initAuthEndpoints = (app: Application, db: Db) => {
 	 *       500:
 	 *         $ref: '#/components/responses/Error'
 	 */
-	app.get('/logout', authReqMiddleware, (req: Request, res: Response) => {
+	app.get('/api/logout', authReqMiddleware, (req: Request, res: Response) => {
 		try {
-			const controller = new AuthenticationController(db);
+			const controller = new PersonController(db);
 			controller.logout(req, res);
 		}catch(e) {
 			logger.error(`An error occurred during logout: ${e.message}`);
