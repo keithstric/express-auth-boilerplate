@@ -3,6 +3,7 @@ import {getVertexByProperty} from '../helpers/db-helpers';
 import { Vertex, IVertexDocument } from '../models/Vertex';
 import { Request, Response } from 'express';
 import { logger } from '../config/logger/logger';
+import {PersonController} from './person-controller';
 
 export class VertexController {
 	db: Db;
@@ -26,24 +27,20 @@ export class VertexController {
 		const newPayload = Object.assign({}, req.body);
 		newPayload.id = req.params.vertexId;
 		this.findVertexByProperty('id', newPayload.id).then((resp: IVertexDocument) => {
-			/**
-			 * TODO: We need to check if the resp is a Person vertex, if it is and email is a property of newPayload
-			 * then we need to verify that the person isn't changing the email address to an address that is in use elsewhere
-			 * TODO: We need to also be able to update the password.
-			 *
-			 * The problem is, these methods are in another controller and it's a general rule that controllers don't invoke
-			 * one another, so not quite sure where to define this functionality. I could of course move the functionality
-			 * up into the "Controller" class since all controllers should extend the "Controller" class.
-			 */
-			const vertObj = Object.assign(resp, newPayload);
-			const vertex = new Vertex(this.db, vertObj);
-			vertex.save().then((val: IVertexDocument) => {
-				if (val) {
-					const updatedVertex = new Vertex(this.db, val);
-					res.send(updatedVertex.toJsonString());
-					logger.info(`Updated vertex with id "${vertex.id}"`);
-				}
-			});
+			if (resp && resp['@class'] && resp['@class'] === 'Person') {
+				const personController = new PersonController(this.db);
+				personController.updatePerson(req, res);
+			}else{
+				const vertObj = Object.assign(resp, newPayload);
+				const vertex = new Vertex(this.db, vertObj);
+				vertex.save().then((val: IVertexDocument) => {
+					if (val) {
+						const updatedVertex = new Vertex(this.db, val);
+						res.send(updatedVertex.toJsonString());
+						logger.info(`Updated vertex with id "${vertex.id}"`);
+					}
+				});
+			}
 		});
 	}
 

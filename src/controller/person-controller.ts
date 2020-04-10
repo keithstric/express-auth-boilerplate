@@ -218,39 +218,47 @@ export class PersonController extends VertexController {
 	 * @param req {Request}
 	 * @param res {Response}
 	 */
-	updatePerson(req: Request, res: Response) {
+	async updatePerson(req: Request, res: Response) {
 		const {vertexId} = req.params;
-		const newPayload = Object.assign({}, req.body);
-		newPayload.id = newPayload.id || vertexId;
-		const {new_password, verify_password, email} = newPayload;
-		delete newPayload.password;
+		const body = Object.assign({}, req.body);
+		if (body.id && body.id !== vertexId) {
+			res.status(400).send(`The ID in the payload (${body.id}) does not match the id in the route (${vertexId})`);
+			return;
+		}
+		body.id = body.id || vertexId;
+		const {new_password, verify_password, email} = body;
+		delete body.password;
 		if (new_password && verify_password) {
 			if (!this.plainPasswordsMatch(new_password, verify_password)) {
 				res.send({message: 'Passwords don\'t match'});
 				return;
 			}else{
-				const hashedPassword = this.createPassword(new_password);
-				newPayload.password = hashedPassword;
+				body.password = this.createPassword(new_password);
 			}
-			delete newPayload.new_password;
-			delete newPayload.verify_password;
+			delete body.new_password;
+			delete body.verify_password;
 		}
-		this.person = new Person(this.db, newPayload);
-		this.verifyValidEmail(email, this.person.id).then((existingPerson: IPersonDocument|{message: string, code: string}) => {
+		const dbPerson = await this.findPersonById(body.id);
+		if (email) {
+			const existingPerson: IPersonDocument | {message: string, code: string} = await this.verifyValidEmail(email, body.id);
 			if (existingPerson && existingPerson.message && existingPerson.code) {
 				res.status(400).send(existingPerson);
 				return;
-			}else{
-				return this.person.save();
 			}
-		}).then((updatedPerson: Person) => {
-			if (updatedPerson) {
+		}
+		const rawPerson = {...dbPerson, ...body};
+		const person = new Person(this.db, rawPerson);
+		try {
+			const updatedPerson: Person | Error = await person.save();
+			if (updatedPerson instanceof Person) {
 				res.send(updatedPerson.toJsonString());
-				logger.info(`User with ${this.person['@rid'] ? 'rid' : 'id'} "${this.person['@rid'] ? this.person['@rid'] : this.person.id}" & email "${this.person.email}" updated their profile}`);
+			}else{
+				logger.error(`User profile update failed. ${updatedPerson.message}`);
+				res.status(500).send({message: updatedPerson.message});
 			}
-		}).catch((err: Error) => {
-			logger.error(`User profile update failed. ${err.message}`);
-			res.status(500).send({message: err.message});
-		});
+		}catch(e) {
+			logger.error(`User profile update failed. ${e.message}`);
+			res.status(500).send({message: e.message});
+		}
 	}
 }
