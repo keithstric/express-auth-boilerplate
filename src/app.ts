@@ -35,7 +35,7 @@ app.use(requestLogger);
 const redisOpts: RedisStoreOptions = {
 	host: process.env.REDIS_HOST,
 	port: parseInt(process.env.REDIS_PORT)
-}
+};
 const RedisStore = connectRedis(session);
 /**
  * express-session middleware. Sets up the cookie and how sessions are stored

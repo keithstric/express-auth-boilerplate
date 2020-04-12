@@ -20,6 +20,6 @@ const getDbConn = () => {
 	const orientClient: OrientDBClient.Server = OrientDBClient(orientServerConfig);
 	const db = orientClient.use(orientClientDbConfig);
 	return db;
-}
+};
 
 export default getDbConn;

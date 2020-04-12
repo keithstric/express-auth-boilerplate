@@ -19,6 +19,9 @@ export function requestLogger(req: Request, res: Response, next: NextFunction) {
 		if (body.password) {
 			body.password = 'xxxxxSECRETxxxxx'; // Do not store a password
 		}
+		if (body.verify_password) {
+			body.verify_password = 'xxxxxSECRETxxxxx'; // Do not store a password
+		}
 	}
 	res.on('finish', () => {
 		const { rawHeaders, httpVersion, method, socket, url } = req;
