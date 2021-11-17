@@ -116,10 +116,10 @@ Please be aware that renaming the database will prompt some required and some op
 
 The following routes are available within this project.
 
-* `/login` - GET - The React Login page
-* `/login` - POST - Route to POST the login form to
-* `/logout` - GET - Route to logout
-* `/register` - POST - Register a new user
+* `/auth/login` - GET - The React Login page
+* `/api/login` - POST - Route to POST the login form to
+* `/api/logout` - GET - Route to logout
+* `/api/register` - POST - Register a new user
 * `/api-docs` - GET - Route for the Swagger Documentation
 * `/api-docs.json` - GET - Get the `swagger.json` file
 * `/api/logs` - GET - Get the most recent log entries or query the log
